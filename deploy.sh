@@ -15,6 +15,7 @@ cd /opt/eye
 
 info "Pulling latest code from GitHub..."
 git pull --ff-only
+git submodule update --init --recursive
 
 info "Rebuilding PHP and Node images..."
 docker compose build --no-cache php-fpm node

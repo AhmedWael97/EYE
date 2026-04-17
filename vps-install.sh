@@ -68,6 +68,12 @@ read -rsp "  OpenAI API key (optional, press Enter to skip): " OPENAI_KEY; echo
 read -rsp "  Mailgun API key (optional, press Enter to skip): " MAILGUN_KEY; echo
 read -rsp "  Mailgun domain (optional, e.g. mg.domain.com) : " MAILGUN_DOMAIN; echo
 
+echo ""
+info "GitHub Personal Access Token needed to clone the private repo."
+info "Create one at: https://github.com/settings/tokens  (scope: repo)"
+read -rsp "  GitHub Personal Access Token                  : " GH_TOKEN; echo
+[[ -z "$GH_TOKEN" ]] && die "GitHub token is required to clone the private repo"
+
 # Auto-generate secrets
 DB_PASS=$(openssl rand -hex 20)
 REDIS_PASS=$(openssl rand -hex 20)
@@ -75,7 +81,7 @@ APP_KEY="base64:$(openssl rand -base64 32)"
 REVERB_SECRET=$(openssl rand -hex 24)
 
 INSTALL_DIR="/opt/eye"
-REPO_URL="https://github.com/AhmedWael97/EYE.git"
+REPO_URL="https://${GH_TOKEN}@github.com/AhmedWael97/EYE.git"
 
 echo ""
 info "Installing to   : $INSTALL_DIR"
@@ -140,12 +146,20 @@ section "Clone Repository"
 if [[ -d "$INSTALL_DIR/.git" ]]; then
   info "Repository exists — pulling latest..."
   git -C "$INSTALL_DIR" pull --ff-only
+  git -C "$INSTALL_DIR" submodule sync
+  git -C "$INSTALL_DIR" submodule update --init --recursive
 else
-  info "Cloning $REPO_URL → $INSTALL_DIR ..."
-  git clone "$REPO_URL" "$INSTALL_DIR"
+  info "Cloning $REPO_URL → $INSTALL_DIR (with submodules)..."
+  git clone --recurse-submodules "$REPO_URL" "$INSTALL_DIR"
 fi
 
 cd "$INSTALL_DIR"
+
+# Ensure submodule URLs use the token (private repos)
+git config submodule.backend.url  "https://${GH_TOKEN}@github.com/AhmedWael97/backend.git"
+git config submodule.frontend.url "https://${GH_TOKEN}@github.com/AhmedWael97/frontend.git"
+git submodule update --init --recursive
+
 success "Repository ready at $INSTALL_DIR"
 
 # Create required directories
