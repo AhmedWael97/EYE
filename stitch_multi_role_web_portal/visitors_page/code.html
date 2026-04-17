@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EYE | Visitors Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#301400",
+                    "primary-container": "#8083ff",
+                    "outline-variant": "#464554",
+                    "surface-container-high": "#222a3d",
+                    "primary": "#c0c1ff",
+                    "on-background": "#dae2fd",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "error": "#ffb4ab",
+                    "on-surface-variant": "#c7c4d7",
+                    "tertiary-fixed-dim": "#ffb783",
+                    "secondary": "#d0bcff",
+                    "on-primary-fixed": "#07006c",
+                    "tertiary-fixed": "#ffdcc5",
+                    "secondary-container": "#571bc1",
+                    "surface-container-highest": "#2d3449",
+                    "surface-variant": "#2d3449",
+                    "secondary-fixed": "#e9ddff",
+                    "outline": "#908fa0",
+                    "surface-tint": "#c0c1ff",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-error": "#690005",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "on-primary": "#1000a9",
+                    "tertiary-container": "#d97721",
+                    "tertiary": "#ffb783",
+                    "on-tertiary-container": "#452000",
+                    "surface-container-low": "#131b2e",
+                    "on-secondary-fixed": "#23005c",
+                    "on-primary-container": "#0d0096",
+                    "inverse-surface": "#dae2fd",
+                    "on-secondary-container": "#c4abff",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary": "#3c0091",
+                    "surface-dim": "#0b1326",
+                    "surface-container": "#171f33",
+                    "surface": "#0b1326",
+                    "inverse-on-surface": "#283044",
+                    "primary-fixed": "#e1e0ff",
+                    "on-tertiary": "#4f2500",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "background": "#0b1326",
+                    "surface-bright": "#31394d",
+                    "surface-container-lowest": "#060e20",
+                    "inverse-primary": "#494bd6",
+                    "error-container": "#93000a",
+                    "on-surface": "#dae2fd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b1326; color: #dae2fd; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(45, 52, 73, 0.6); backdrop-filter: blur(20px); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b1326; }
+        ::-webkit-scrollbar-thumb { background: #2d3449; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar Shell -->
+<header class="bg-[#0b1326] dark:bg-[#0b1326] shadow-[0px_20px_40px_rgba(7,0,108,0.2)] docked full-width top-0 fixed z-50 flex justify-between items-center w-full px-8 py-4">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-[#c0c1ff] font-['Inter']">EYE</span>
+<div class="hidden md:flex items-center gap-6">
+<nav class="flex items-center gap-6 text-sm font-medium">
+<a class="text-[#c0c1ff] border-b-2 border-[#c0c1ff] pb-1 font-['Inter'] tracking-tight" href="#">Visitors</a>
+<a class="text-slate-400 hover:bg-[#171f33] transition-colors px-2 py-1 rounded font-['Inter'] tracking-tight" href="#">Insights</a>
+<a class="text-slate-400 hover:bg-[#171f33] transition-colors px-2 py-1 rounded font-['Inter'] tracking-tight" href="#">Users</a>
+<a class="text-slate-400 hover:bg-[#171f33] transition-colors px-2 py-1 rounded font-['Inter'] tracking-tight" href="#">Billing</a>
+</nav>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative bg-surface-container-lowest rounded-lg flex items-center px-3 py-1.5 w-64 group focus-within:ring-2 ring-primary">
+<span class="material-symbols-outlined text-slate-400 text-lg mr-2">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0 text-on-surface w-full" placeholder="Search visitors..." type="text"/>
+</div>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full border border-primary/20 object-cover" data-alt="professional male administrator portrait in corporate attire with soft office lighting and modern tech background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnjmIr0Z8JBSybud744OXwcTQC0LCzSupUGwwW7eIVhjy9P_sV-ji2z4I6QdamprWw1rt8kIJyJ-3LOVNx130eb2MH4BlLsqZBGAhdVC_WXn2xD9aQKMP_7LyfFBU_48SxrsPdtGur8sSagYfeAFiBCJ0JU4uyfLffz57rxLUJc9b9gVFhBwORnkk-Tz3gwa5fiznQqEgWGnLG48yARfSIwBbUXw_LwamYvl-wFejSEG7uIv2KZbUu9aiSuqbGm9uWbIQ0Dvtvee-h"/>
+</div>
+</header>
+<!-- Sidebar Navigation -->
+<aside class="bg-[#131b2e] dark:bg-[#131b2e] h-screen w-64 fixed left-0 top-0 pt-20 flex flex-col z-40">
+<div class="px-6 py-4 mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">visibility</span>
+</div>
+<div>
+<h2 class="text-xl font-bold text-[#c0c1ff] leading-none">EYE</h2>
+<p class="text-[10px] text-slate-400 font-['Inter'] uppercase tracking-widest mt-1">AI Visitor Tracking</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-slate-400 hover:bg-[#171f33] px-4 py-3 mx-2 rounded-lg flex items-center gap-3 transition-colors font-['Inter'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Overview
+            </a>
+<a class="bg-[#2d3449] text-[#c0c1ff] rounded-lg mx-2 px-4 py-3 flex items-center gap-3 active:translate-x-1 transition-transform font-['Inter'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+                Visitors
+            </a>
+<a class="text-slate-400 hover:bg-[#171f33] px-4 py-3 mx-2 rounded-lg flex items-center gap-3 transition-colors font-['Inter'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+                Analytics
+            </a>
+<a class="text-slate-400 hover:bg-[#171f33] px-4 py-3 mx-2 rounded-lg flex items-center gap-3 transition-colors font-['Inter'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+                AI
+            </a>
+<a class="text-slate-400 hover:bg-[#171f33] px-4 py-3 mx-2 rounded-lg flex items-center gap-3 transition-colors font-['Inter'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="mt-auto p-4 space-y-1 border-t border-white/5">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold py-2.5 rounded-lg text-sm mb-4">
+                Generate Report
+            </button>
+<a class="text-slate-400 hover:text-white px-4 py-2 flex items-center gap-3 text-sm font-['Inter']" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Support
+            </a>
+<a class="text-slate-400 hover:text-white px-4 py-2 flex items-center gap-3 text-sm font-['Inter']" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+                Documentation
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 p-8 min-h-screen">
+<header class="mb-10 flex justify-between items-end">
+<div>
+<h1 class="text-[3.5rem] font-black tracking-tight leading-tight text-primary-fixed-dim font-headline">Visitors</h1>
+<p class="text-on-surface-variant font-medium mt-2 max-w-md">Real-time intelligence on your digital audience. Powered by AI-driven behavioral analysis.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container rounded-xl p-1 flex">
+<button class="bg-surface-container-highest text-primary px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest">Real-time</button>
+<button class="text-slate-400 px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest">Historical</button>
+</div>
+</div>
+</header>
+<!-- Filters Section -->
+<section class="mb-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-surface-container-low p-4 rounded-xl">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Country</label>
+<div class="flex items-center justify-between text-sm">
+<span class="font-medium text-on-surface">All Locations</span>
+<span class="material-symbols-outlined text-primary text-sm">keyboard_arrow_down</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Device</label>
+<div class="flex items-center justify-between text-sm">
+<span class="font-medium text-on-surface">Any Device</span>
+<span class="material-symbols-outlined text-primary text-sm">keyboard_arrow_down</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Last Seen</label>
+<div class="flex items-center justify-between text-sm">
+<span class="font-medium text-on-surface">Past 24 Hours</span>
+<span class="material-symbols-outlined text-primary text-sm">keyboard_arrow_down</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between">
+<div>
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">Quick Status</label>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(192,193,255,0.8)]"></span>
+<span class="text-sm font-bold text-on-surface">1,204 Live</span>
+</div>
+</div>
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</section>
+<!-- Table Container -->
+<div class="bg-surface-container rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Visitor ID</th>
+<th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Location</th>
+<th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Device</th>
+<th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Sessions</th>
+<th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Last Active</th>
+<th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Insights</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/[0.03]">
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-mono text-primary">#9021</div>
+<span class="font-medium text-on-surface">usr_9d2f...a12</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img alt="Flag" class="w-4 h-3 rounded-sm object-cover" data-alt="micro shot of american flag texture with subtle fabric details and soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB59be1Yt6As6_M5odhxnEqabb6UDD1Qa7EGFtyFqqBYgmdtYAaRlijZygdS6xnv1oTQ4JScbMp_hheNOujrHmm7yFlKuQPOEgSj0rXeKGc83KDinvnAkTcQDZGdafYnjU9-3ss-eWG38DoEmG1x_vqFKO1sB08pXxz35Hx2hYLAZj1ZdueaZPg_y3SFKuVIabgqk5IAIkemnjBM6fjyK9aJdsZM3NDKjtpk4Ypow4e8Knc3dK3NCnoNhXFUfx-x8IHFODe4_NS6cmS"/>
+<span class="text-sm text-slate-300">San Francisco, USA</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="material-symbols-outlined text-slate-400">desktop_windows</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm font-bold text-on-surface">42</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm text-slate-400">2 mins ago</span>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="bg-secondary-container/40 text-secondary text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-tight">Active Buyer</span>
+</td>
+</tr>
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-mono text-primary">#8842</div>
+<span class="font-medium text-on-surface">usr_3k1l...04x</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img alt="Flag" class="w-4 h-3 rounded-sm object-cover" data-alt="micro shot of japanese flag texture with clean white background and sharp red sun detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW8CGDUnY3m9kgGA5qSae8_GD2wVm6So2yVgukdL38j_2HxPXuB8F95VPlrffrU6c_SDdpFJo8wv-9Xqbqdj0N0Gt7rUkQ9ZzCLylS316lrPYStjl4PmcMk2U0AqNXm-5X3PeAirKLEfxhrPVElClyQ1FASPax5qxPavEelcsWfXsGt70WpxMRqjq5r9TdOia__-I-Sqs2fAAg_eK0oE-nSnqHiO_3B2M890HeZHAQ5VIEj-an9I50S-lLSOUMWJ8L49BJMVL6z8Fa"/>
+<span class="text-sm text-slate-300">Tokyo, JP</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="material-symbols-outlined text-slate-400">smartphone</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm font-bold text-on-surface">12</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm text-slate-400">14 mins ago</span>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="bg-tertiary-container/20 text-tertiary text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-tight">AI Flag</span>
+</td>
+</tr>
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-mono text-primary">#8711</div>
+<span class="font-medium text-on-surface">usr_1m8w...p9s</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img alt="Flag" class="w-4 h-3 rounded-sm object-cover" data-alt="micro shot of german flag texture with deep black red and gold colors in soft focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUSP9J1WqG7yHLIff6LFesFG_mPEeW2kj1F-C3v6leETkPvzW-X5qbRhv6YWCB6cNQKyvAuIfX8sYDliBLSh-QyamFrfIdVURYh2_3wFduGJpZZjfXY7fp6oBs3ssa92fkqDVGA5cTbpgoTPKZJeOibRm0DYVKxwDCRl3fzReI20ZOnDfhz48PQ35Pqm65RXoj3ZEdrqt96KpzY6mf5PH9zUJpXyWOjN4e9ufM4gTvci1P2YO8lMSfx6potEyMinc6pg56IrF7n5sa"/>
+<span class="text-sm text-slate-300">Berlin, DE</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="material-symbols-outlined text-slate-400">laptop_mac</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm font-bold text-on-surface">3</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm text-slate-400">1 hour ago</span>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="bg-white/5 text-slate-400 text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-tight">New Lead</span>
+</td>
+</tr>
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-mono text-primary">#8603</div>
+<span class="font-medium text-on-surface">usr_7v2q...q2w</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img alt="Flag" class="w-4 h-3 rounded-sm object-cover" data-alt="micro shot of british union jack flag texture with rich blue and red cross patterns" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhoDrpYN84IUEwcp3RStaPdV3AT2bV6Dg_uI_uTt5GfDom1eH7TL40g8ikm5nHJRUeXol7JumQRKxjxeGzHB9M-khJQxyfLqXCZiKfn2LYQP6tIkOWet_AT8SwsCsKSyFWUTPxDxuJtbsktVRfUoEsdbWW6zSgUghr4Tse_-YbtrN3wVJffUxSQ1mgN1F6jiRzCoAJDiQulsdOeD53yAqU8XNhFIwvof30shXkxwdbu9AOtT-1h3Hp7ISySDTIGbpm2fQrApn1TkoQ"/>
+<span class="text-sm text-slate-300">London, UK</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="material-symbols-outlined text-slate-400">tablet_mac</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm font-bold text-on-surface">156</span>
+</td>
+<td class="px-6 py-5">
+<span class="text-sm text-slate-400">3 hours ago</span>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="bg-secondary-container/40 text-secondary text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-tight">Power User</span>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<footer class="bg-surface-container-low px-6 py-4 flex items-center justify-between border-t border-white/5">
+<p class="text-xs text-slate-500 font-medium">Showing <span class="text-on-surface">1 - 4</span> of <span class="text-on-surface">14,203</span> visitors</p>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-slate-400 transition-all">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary-fixed font-bold text-xs">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-slate-400 font-bold text-xs transition-all">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-slate-400 font-bold text-xs transition-all">3</button>
+<span class="text-slate-600 px-1">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-slate-400 font-bold text-xs transition-all">142</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-slate-400 transition-all">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</footer>
+</div>
+<!-- AI Insights Sidebar Overlay - Bento Style -->
+<section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="col-span-1 md:col-span-2 glass-panel p-8 rounded-2xl relative overflow-hidden group">
+<div class="relative z-10">
+<h3 class="text-2xl font-bold text-white mb-2 font-headline">Behavioral Trend</h3>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">AI detected a 14% increase in mobile users from Central Europe during evening hours. Recommend optimizing checkout flow for iOS devices.</p>
+<div class="h-32 flex items-end gap-2 px-2">
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[40%] group-hover:h-[60%] transition-all duration-500"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[65%] group-hover:h-[85%] transition-all duration-500 delay-75"></div>
+<div class="flex-1 bg-primary rounded-t-lg h-[55%] group-hover:h-[75%] transition-all duration-500 delay-150 shadow-[0_0_20px_rgba(192,193,255,0.4)]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[85%] group-hover:h-[95%] transition-all duration-500 delay-225"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[45%] group-hover:h-[65%] transition-all duration-500 delay-300"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[70%] group-hover:h-[90%] transition-all duration-500 delay-375"></div>
+<div class="flex-1 bg-secondary rounded-t-lg h-[95%] group-hover:h-[100%] transition-all duration-500 delay-450 shadow-[0_0_20px_rgba(208,188,255,0.4)]"></div>
+</div>
+</div>
+<div class="absolute -right-12 -top-12 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
+</div>
+<div class="bg-surface-container-high p-8 rounded-2xl border border-white/5 flex flex-col justify-between">
+<div>
+<span class="bg-primary/10 text-primary text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest mb-4 inline-block">Anomaly Alert</span>
+<h3 class="text-xl font-bold text-white mb-4 font-headline">Bot Pattern Detected</h3>
+<p class="text-slate-400 text-sm leading-relaxed">Multiple sessions from unique IDs share identical fingerprint metadata in the North American region.</p>
+</div>
+<button class="mt-8 flex items-center gap-2 text-primary font-bold text-sm group">
+                    Review Patterns 
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</section>
+</main>
+<!-- FAB for mobile intent (Hidden on large screens by system context) -->
+<div class="md:hidden fixed bottom-6 right-6">
+<button class="w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</body></html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EYE | Super Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#d0bcff",
+                        "error-container": "#93000a",
+                        "primary": "#c0c1ff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "outline": "#908fa0",
+                        "on-secondary-fixed": "#23005c",
+                        "on-tertiary-fixed": "#301400",
+                        "inverse-on-surface": "#283044",
+                        "tertiary": "#ffb783",
+                        "on-error": "#690005",
+                        "surface-bright": "#31394d",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "on-primary": "#1000a9",
+                        "primary-container": "#8083ff",
+                        "on-surface-variant": "#c7c4d7",
+                        "primary-fixed": "#e1e0ff",
+                        "on-secondary": "#3c0091",
+                        "tertiary-container": "#d97721",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-tertiary-container": "#452000",
+                        "on-secondary-container": "#c4abff",
+                        "surface-container-low": "#131b2e",
+                        "surface-container-lowest": "#060e20",
+                        "tertiary-fixed": "#ffdcc5",
+                        "surface-container-high": "#222a3d",
+                        "on-primary-container": "#0d0096",
+                        "outline-variant": "#464554",
+                        "surface-container-highest": "#2d3449",
+                        "on-surface": "#dae2fd",
+                        "background": "#0b1326",
+                        "surface-variant": "#2d3449",
+                        "secondary-container": "#571bc1",
+                        "surface": "#0b1326",
+                        "on-tertiary": "#4f2500",
+                        "surface-container": "#171f33",
+                        "inverse-primary": "#494bd6",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed": "#07006c",
+                        "surface-tint": "#c0c1ff",
+                        "on-background": "#dae2fd",
+                        "inverse-surface": "#dae2fd",
+                        "secondary-fixed": "#e9ddff",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "surface-dim": "#0b1326",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed-dim": "#d0bcff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+        }
+        .glass-card {
+            background-color: rgba(45, 52, 73, 0.6);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary">
+<!-- Super Admin SideNavBar -->
+<aside class="h-full w-72 fixed left-0 top-0 flex flex-col py-6 bg-slate-950 border-r border-indigo-500/10 shadow-2xl shadow-indigo-900/20 z-50">
+<div class="px-8 mb-10">
+<h1 class="text-lg font-black text-indigo-400 font-headline">Super Admin</h1>
+<p class="font-inter text-xs uppercase tracking-widest text-slate-500 mt-1">System Control</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-indigo-300 bg-indigo-900/30 border-l-4 border-indigo-400 px-8 py-3 brightness-125 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-inter text-xs uppercase tracking-widest">Stats</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-8 py-3 hover:bg-indigo-900/10 hover:text-indigo-200 brightness-125 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="manage_accounts">manage_accounts</span>
+<span class="font-inter text-xs uppercase tracking-widest">Users</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-8 py-3 hover:bg-indigo-900/10 hover:text-indigo-200 brightness-125 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="subscriptions">subscriptions</span>
+<span class="font-inter text-xs uppercase tracking-widest">Plans</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-8 py-3 hover:bg-indigo-900/10 hover:text-indigo-200 brightness-125 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-inter text-xs uppercase tracking-widest">Payments</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-8 py-3 hover:bg-indigo-900/10 hover:text-indigo-200 brightness-125 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span class="font-inter text-xs uppercase tracking-widest">Domains</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-8 py-3 hover:bg-indigo-900/10 hover:text-indigo-200 brightness-125 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-inter text-xs uppercase tracking-widest">Audit Log</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-8 py-3 hover:bg-indigo-900/10 hover:text-indigo-200 brightness-125 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="palette">palette</span>
+<span class="font-inter text-xs uppercase tracking-widest">Theme</span>
+</a>
+</nav>
+<div class="px-8 mt-auto pt-6 border-t border-indigo-500/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="Admin Avatar" class="w-full h-full object-cover" data-alt="professional headshot of a senior executive with salt and pepper hair in a dark studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnCBd2EWk3nOKlVVQppe1xzTTtAtUu6PpazRr2hNXnJsqroONN_vaBEWYr2f94N-NRcMMeUCSIZQEQZiKT274T8YAuZJCQCI1F7m6MMh9dqe4vewweugzZ1EDTci_P-d5m9W72O3F4uxF0Z1C93BHvB-M_-5mUzARwTP8ce4crf5eTu6DWRq1Zal5tVzyz_KS6mWRSJfw2O5A93Gj5zD2LemWkZFpcEZ4NK2Pd_V6oG6TA0vCf0Mo4W1ZV-MjxVREg7W9r06TIullB"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Alex Rivera</p>
+<p class="text-[10px] uppercase tracking-tighter text-indigo-400">Chief Architect</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-72 p-12 min-h-screen">
+<!-- Header Section -->
+<header class="flex justify-between items-end mb-12">
+<div class="space-y-2">
+<p class="label-sm font-label uppercase tracking-widest text-primary font-bold">System Intelligence</p>
+<h2 class="text-[3.5rem] font-black tracking-tight leading-none text-on-surface">Global Metrics.</h2>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                    Export PDF
+                </button>
+<button class="px-6 py-3 rounded-lg signature-glow text-on-primary-container font-bold text-sm shadow-[0px_20px_40px_rgba(7,0,108,0.2)]">
+                    Refresh Systems
+                </button>
+</div>
+</header>
+<!-- Bento Grid: Key Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<!-- MRR Card -->
+<div class="bg-surface-container-low p-8 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all"></div>
+<p class="label-sm font-label uppercase tracking-widest text-slate-500 mb-4">Monthly Recurring Revenue</p>
+<h3 class="text-4xl font-black text-on-surface mb-2">$842,201</h3>
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span class="text-xs font-bold">+12.4% vs last month</span>
+</div>
+</div>
+<!-- Total Users Card -->
+<div class="bg-surface-container-low p-8 rounded-xl relative overflow-hidden group">
+<p class="label-sm font-label uppercase tracking-widest text-slate-500 mb-4">Total Users</p>
+<h3 class="text-4xl font-black text-on-surface mb-2">1.2M</h3>
+<div class="flex items-center gap-2 text-tertiary">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+<span class="text-xs font-bold">89k joined this week</span>
+</div>
+</div>
+<!-- Active Subscriptions -->
+<div class="bg-surface-container-low p-8 rounded-xl relative overflow-hidden group">
+<p class="label-sm font-label uppercase tracking-widest text-slate-500 mb-4">Active Subscriptions</p>
+<h3 class="text-4xl font-black text-on-surface mb-2">42,903</h3>
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+<span class="text-xs font-bold">98.2% retention rate</span>
+</div>
+</div>
+<!-- Total Events -->
+<div class="bg-surface-container-low p-8 rounded-xl relative overflow-hidden group">
+<p class="label-sm font-label uppercase tracking-widest text-slate-500 mb-4">Events Today</p>
+<h3 class="text-4xl font-black text-on-surface mb-2">1.4B</h3>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="sensors">sensors</span>
+<span class="text-xs font-bold">Peak: 450k req/sec</span>
+</div>
+</div>
+</div>
+<!-- Main Content Area: Charts and Tables -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Revenue Growth (Asymmetric 2/3 width) -->
+<div class="lg:col-span-2 bg-surface-container p-8 rounded-xl space-y-8">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-xl font-bold text-on-surface">Revenue Growth</h4>
+<p class="text-sm text-slate-500 mt-1">Global platform earnings over the fiscal quarter.</p>
+</div>
+<div class="flex bg-surface-container-lowest p-1 rounded-lg">
+<button class="px-4 py-1 text-xs font-bold bg-surface-container-highest rounded text-primary">1Q</button>
+<button class="px-4 py-1 text-xs font-bold text-slate-500">2Q</button>
+<button class="px-4 py-1 text-xs font-bold text-slate-500">3Q</button>
+</div>
+</div>
+<div class="h-64 flex items-end gap-3 px-4">
+<!-- Placeholder Chart Visual -->
+<div class="flex-1 bg-primary/20 h-[30%] rounded-t-lg relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-on-primary text-[10px] px-2 py-1 rounded">$120k</div>
+</div>
+<div class="flex-1 bg-primary/30 h-[45%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/40 h-[40%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/50 h-[65%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/60 h-[55%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/70 h-[85%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/80 h-[100%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/60 h-[70%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/40 h-[90%] rounded-t-lg"></div>
+<div class="flex-1 bg-primary/80 h-[95%] rounded-t-lg"></div>
+</div>
+</div>
+<!-- Top Plans (1/3 width) -->
+<div class="bg-surface-container-high p-8 rounded-xl">
+<h4 class="text-xl font-bold text-on-surface mb-6">Top Plans</h4>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div>
+<p class="text-sm font-bold">Enterprise AI</p>
+<p class="text-xs text-slate-500">$2,499/mo</p>
+</div>
+</div>
+<p class="text-sm font-black text-on-surface">42%</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<div>
+<p class="text-sm font-bold">Pro Curator</p>
+<p class="text-xs text-slate-500">$499/mo</p>
+</div>
+</div>
+<p class="text-sm font-black text-on-surface">31%</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<div>
+<p class="text-sm font-bold">Growth Lens</p>
+<p class="text-xs text-slate-500">$149/mo</p>
+</div>
+</div>
+<p class="text-sm font-black text-on-surface">18%</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-slate-500"></div>
+<div>
+<p class="text-sm font-bold">Free Tier</p>
+<p class="text-xs text-slate-500">$0/mo</p>
+</div>
+</div>
+<p class="text-sm font-black text-on-surface">9%</p>
+</div>
+</div>
+<div class="mt-10 p-6 bg-surface-container-lowest rounded-xl border border-indigo-500/10">
+<div class="flex items-center gap-2 text-tertiary mb-2">
+<span class="material-symbols-outlined text-lg" data-icon="auto_awesome">auto_awesome</span>
+<p class="text-xs font-bold uppercase tracking-tighter">AI Insight</p>
+</div>
+<p class="text-xs text-slate-300 leading-relaxed">
+                        Enterprise conversions have increased by <span class="text-primary font-bold">8.4%</span> since the new data curation features were launched.
+                    </p>
+</div>
+</div>
+</div>
+<!-- System Health Section -->
+<section class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-surface-container p-8 rounded-xl">
+<h4 class="text-xl font-bold text-on-surface mb-6">System Health Status</h4>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-lowest rounded-lg flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#10b981]"></div>
+<span class="text-[10px] font-bold uppercase text-slate-500">Core Services</span>
+</div>
+<p class="text-lg font-bold text-on-surface">99.99% Uptime</p>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded-lg flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#10b981]"></div>
+<span class="text-[10px] font-bold uppercase text-slate-500">Database Cluster</span>
+</div>
+<p class="text-lg font-bold text-on-surface">Healthy</p>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded-lg flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#ffb783]"></div>
+<span class="text-[10px] font-bold uppercase text-slate-500">API Latency</span>
+</div>
+<p class="text-lg font-bold text-on-surface">142ms (Avg)</p>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded-lg flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#10b981]"></div>
+<span class="text-[10px] font-bold uppercase text-slate-500">AI Inference</span>
+</div>
+<p class="text-lg font-bold text-on-surface">Optimal</p>
+</div>
+</div>
+</div>
+<!-- New Signups Sparkline -->
+<div class="bg-surface-container-low p-8 rounded-xl flex flex-col justify-between overflow-hidden relative">
+<div>
+<h4 class="text-xl font-bold text-on-surface">Recent Signups</h4>
+<p class="text-sm text-slate-500 mt-1">Real-time user onboarding trajectory.</p>
+</div>
+<div class="mt-8 flex items-center gap-12">
+<div>
+<p class="text-4xl font-black text-on-surface">4,281</p>
+<p class="text-xs text-primary font-bold mt-1">+18% Today</p>
+</div>
+<div class="flex-1 h-20">
+<!-- Abstract Waveform/SVG for Sparkline -->
+<svg class="w-full h-full" viewbox="0 0 100 30">
+<path d="M0,25 Q10,25 20,15 T40,20 T60,5 T80,15 T100,10" fill="none" stroke="#c0c1ff" stroke-width="2"></path>
+<path d="M0,25 Q10,25 20,15 T40,20 T60,5 T80,15 T100,10 V30 H0 Z" fill="url(#grad1)" opacity="0.3"></path>
+<defs>
+<lineargradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#c0c1ff;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#c0c1ff;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+<!-- Subtle Pattern Background -->
+<div class="absolute inset-0 pointer-events-none opacity-5">
+<div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(#c0c1ff 1px, transparent 1px); background-size: 20px 20px;"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="ml-72 bg-slate-950 border-t border-slate-800">
+<div class="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+<div>
+<p class="text-lg font-bold text-indigo-200">EYE</p>
+<p class="font-inter text-sm text-slate-500 mt-2">© 2024 EYE AI Visitor Tracking. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap gap-6 md:justify-end">
+<a class="font-inter text-sm text-slate-500 hover:text-indigo-200 transition-colors" href="#">Privacy Policy</a>
+<a class="font-inter text-sm text-slate-500 hover:text-indigo-200 transition-colors" href="#">Terms of Service</a>
+<a class="font-inter text-sm text-slate-500 hover:text-indigo-200 transition-colors" href="#">Contact</a>
+<a class="font-inter text-sm text-slate-500 hover:text-indigo-200 transition-colors" href="#">API Docs</a>
+</div>
+</div>
+</footer>
+</body></html>

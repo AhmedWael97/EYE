@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EYE | لوحة تحكم ذكاء الزوار بالذكاء الاصطناعي</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#d0bcff",
+                    "error-container": "#93000a",
+                    "primary": "#c0c1ff",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "outline": "#908fa0",
+                    "on-secondary-fixed": "#23005c",
+                    "on-tertiary-fixed": "#301400",
+                    "inverse-on-surface": "#283044",
+                    "tertiary": "#ffb783",
+                    "on-error": "#690005",
+                    "surface-bright": "#31394d",
+                    "tertiary-fixed-dim": "#ffb783",
+                    "on-primary": "#1000a9",
+                    "primary-container": "#8083ff",
+                    "on-surface-variant": "#c7c4d7",
+                    "primary-fixed": "#e1e0ff",
+                    "on-secondary": "#3c0091",
+                    "tertiary-container": "#d97721",
+                    "error": "#ffb4ab",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "on-tertiary-container": "#452000",
+                    "on-secondary-container": "#c4abff",
+                    "surface-container-low": "#131b2e",
+                    "surface-container-lowest": "#060e20",
+                    "tertiary-fixed": "#ffdcc5",
+                    "surface-container-high": "#222a3d",
+                    "on-primary-container": "#0d0096",
+                    "outline-variant": "#464554",
+                    "surface-container-highest": "#2d3449",
+                    "on-surface": "#dae2fd",
+                    "background": "#0b1326",
+                    "surface-variant": "#2d3449",
+                    "secondary-container": "#571bc1",
+                    "surface": "#0b1326",
+                    "on-tertiary": "#4f2500",
+                    "surface-container": "#171f33",
+                    "inverse-primary": "#494bd6",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#07006c",
+                    "surface-tint": "#c0c1ff",
+                    "on-background": "#dae2fd",
+                    "inverse-surface": "#dae2fd",
+                    "secondary-fixed": "#e9ddff",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "surface-dim": "#0b1326",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "secondary-fixed-dim": "#d0bcff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Tajawal", "sans-serif"],
+                    "body": ["Tajawal", "sans-serif"],
+                    "label": ["Tajawal", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Tajawal', sans-serif; }
+        .glass-panel {
+            background: rgba(45, 52, 73, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+        }
+        .rtl-mirror {
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-surface/60 dark:bg-slate-950/60 backdrop-blur-xl shadow-[0px_20px_40px_rgba(7,0,108,0.2)]">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-indigo-200 dark:text-indigo-200">EYE</span>
+<!-- Domain Selector -->
+<div class="flex items-center gap-3 px-4 py-2 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="domain">domain</span>
+<span class="text-sm font-medium">analytics.eye-ai.io</span>
+<span class="material-symbols-outlined text-xs opacity-50" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-indigo-200 border-b-2 border-indigo-300 pb-1 font-bold tracking-tight" href="#">نظرة عامة</a>
+<a class="text-slate-400 hover:text-indigo-200 transition-all tracking-tight" href="#">الوقت الفعلي</a>
+<a class="text-slate-400 hover:text-indigo-200 transition-all tracking-tight" href="#">المسارات</a>
+<a class="text-slate-400 hover:text-indigo-200 transition-all tracking-tight" href="#">إعدادات الذكاء الاصطناعي</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-indigo-500/10 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border border-primary/20">
+<img alt="المستخدم" data-alt="Portrait of a professional user for a profile avatar, soft studio lighting, minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtV-zJNcdNYUq0lQt5kUZI-8qVsovmhYi8Mw8_NKlBsTpygOp5Buyzw1_fNX6pXa9i7bjH0ytJe3vORU6TVfWpFihrFanE6Nwmi-DEVjoBooXH4GKbuMVJ7fqG64epVCxsmvam9Invuxtxki7PisSqG4D3io7f3gQ_AVjTDCFkj6IBM-dW59iDSrwrFHiqNXDOcdJdVU7zeXP3_Zz2wj_JLly1ZZW5FfJdYR9ZbwhoCwo47RVuOtA5gxkFm0V3a8y1fBiorQwpxlHq"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Right Fixed) -->
+<aside class="hidden lg:flex flex-col h-screen p-4 gap-2 h-full w-64 fixed right-0 top-0 bg-slate-900 dark:bg-slate-950 pt-24 border-l border-slate-800/50">
+<div class="mb-6 px-4">
+<p class="text-[0.6875rem] uppercase tracking-[0.05em] font-bold text-slate-500">ذكاء الزوار</p>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 bg-indigo-500/20 text-indigo-200 font-bold rounded-lg -translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm font-medium">نظرة عامة</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="text-sm font-medium">الوقت الفعلي</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-sm font-medium">الزوار</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-sm font-medium">التحليلات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="filter_alt">filter_alt</span>
+<span class="text-sm font-medium">المسارات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="text-sm font-medium">الذكاء الاصطناعي</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-sm font-medium">الإعدادات</span>
+</a>
+<div class="mt-auto pt-6 border-t border-slate-800/50">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-sm font-medium">المساعدة</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-indigo-100 transition-colors" href="#">
+<span class="material-symbols-outlined rtl-mirror" data-icon="logout">logout</span>
+<span class="text-sm font-medium">تسجيل الخروج</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:pr-64 pt-24 min-h-screen">
+<div class="max-w-[1600px] mx-auto p-8 flex flex-col gap-8">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div class="space-y-1">
+<h1 class="text-[1.75rem] font-bold leading-tight tracking-tight">لوحة القيادة التنفيذية</h1>
+<p class="text-on-surface-variant text-base">مراجعة اتجاهات الزوار لمدة 30 يومًا وإشارات السلوك المعتمدة على الذكاء الاصطناعي.</p>
+</div>
+<div class="flex gap-4">
+<div class="px-4 py-2 bg-surface-container rounded-lg border border-outline-variant/10 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+<span class="text-sm font-medium">آخر 30 يومًا</span>
+</div>
+<button class="px-6 py-2 signature-glow rounded-lg text-on-primary font-bold shadow-lg shadow-primary/20 scale-95 active:scale-90 transition-transform">
+                        تحميل التقرير
+                    </button>
+</div>
+</div>
+<!-- KPI Cards Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+<!-- Card 1: Visitors -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 left-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" data-icon="visibility">visibility</span>
+</div>
+<p class="text-xs text-on-surface-variant uppercase tracking-[0.05em] mb-4">زوار فريدون</p>
+<div class="flex items-baseline gap-3">
+<span class="text-3xl font-extrabold tracking-tighter">142,802</span>
+<span class="text-sm font-bold text-primary flex items-center" dir="ltr">+12.4%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4 rounded-full"></div>
+</div>
+</div>
+<!-- Card 2: Sessions -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 left-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" data-icon="schedule">schedule</span>
+</div>
+<p class="text-xs text-on-surface-variant uppercase tracking-[0.05em] mb-4">إجمالي الجلسات</p>
+<div class="flex items-baseline gap-3">
+<span class="text-3xl font-extrabold tracking-tighter">289,114</span>
+<span class="text-sm font-bold text-tertiary flex items-center" dir="ltr">-2.1%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-1/2 rounded-full"></div>
+</div>
+</div>
+<!-- Card 3: Avg Time -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 left-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" data-icon="timer">timer</span>
+</div>
+<p class="text-xs text-on-surface-variant uppercase tracking-[0.05em] mb-4">متوسط وقت الجلسة</p>
+<div class="flex items-baseline gap-3">
+<span class="text-3xl font-extrabold tracking-tighter">04:22</span>
+<span class="text-sm font-bold text-primary flex items-center" dir="ltr">+18%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full signature-glow w-2/3 rounded-full"></div>
+</div>
+</div>
+<!-- Card 4: Bounce Rate -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 left-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl rtl-mirror" data-icon="output">output</span>
+</div>
+<p class="text-xs text-on-surface-variant uppercase tracking-[0.05em] mb-4">معدل الارتداد</p>
+<div class="flex items-baseline gap-3">
+<span class="text-3xl font-extrabold tracking-tighter">24.8%</span>
+<span class="text-sm font-bold text-primary flex items-center text-opacity-50">مستقر</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant w-1/4 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Central Data Visualisation -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- Large Area Chart (Main) -->
+<div class="xl:col-span-2 bg-surface-container p-8 rounded-xl flex flex-col gap-6">
+<div class="flex justify-between items-center">
+<div>
+<h3 class="text-lg font-bold">تحليل تدفق الزوار</h3>
+<p class="text-xs text-on-surface-variant">الجلسات الفريدة اليومية عبر جميع الأجهزة</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-xs font-medium">سطح المكتب</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="text-xs font-medium">الجوال</span>
+</div>
+</div>
+</div>
+<div class="h-[400px] w-full relative flex items-end gap-1 rtl-mirror">
+<!-- Abstract Chart Representation -->
+<div class="w-full h-full absolute flex items-end opacity-20">
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 40%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 55%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 45%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 70%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 85%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 75%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 90%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 60%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 50%"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-transparent" style="height: 45%"></div>
+</div>
+<div class="w-full h-full flex items-end overflow-hidden">
+<!-- SVG for actual line -->
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 1000 400">
+<path class="text-primary" d="M0,350 Q50,300 100,320 T200,200 T300,250 T400,100 T500,150 T600,50 T700,180 T800,120 T900,150 T1000,100" fill="none" stroke="currentColor" stroke-width="4"></path>
+<path class="text-secondary" d="M0,380 Q50,340 100,360 T200,250 T300,300 T400,180 T500,220 T600,140 T700,250 T800,200 T900,230 T1000,180" fill="none" stroke="currentColor" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="flex justify-between px-2 text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">
+<span>اليوم 01</span>
+<span>اليوم 07</span>
+<span>اليوم 14</span>
+<span>اليوم 21</span>
+<span>اليوم 30</span>
+</div>
+</div>
+<!-- World Map & Geo Distribution -->
+<div class="bg-surface-container p-8 rounded-xl flex flex-col gap-6">
+<div>
+<h3 class="text-lg font-bold">الانتشار العالمي</h3>
+<p class="text-xs text-on-surface-variant">أهم مصادر حركة المرور الجغرافية</p>
+</div>
+<div class="relative w-full aspect-video rounded-lg overflow-hidden bg-surface-container-low border border-outline-variant/10">
+<img class="w-full h-full object-cover opacity-60" data-alt="Stylized world map with glowing nodes representing data traffic points in shades of indigo and blue" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjeNixWYTJECfFbGNe9ZjrHBby_Bb1baNqpXl5xmP2SaDDtkv4CSn06EckLse-9ULubV6iLRIS-4N-1J29TP97UXbWHCTp3phaG3gxrOqiOqsGVh0dpITh-94osbJ-jx5Q_2N_cAA6VGGWejL5h22Z3Dgc5hbvVO0NAkj4ITuXjkMgctl-yI4fcF-2YnG1u4TqFV9SkFcAY6XC3bMPCJWLwsNp_btJLmVq4k3gbOv40kobRvN-p8J0LG9_XERaMuEOa9JNLYRymqHh"/>
+<!-- Map Marker Mockups -->
+<div class="absolute top-[30%] right-[20%] w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+<div class="absolute top-[40%] right-[50%] w-4 h-4 bg-primary-container rounded-full animate-pulse"></div>
+<div class="absolute top-[60%] right-[75%] w-2 h-2 bg-secondary rounded-full animate-pulse"></div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6">US</span>
+<span class="text-sm">الولايات المتحدة</span>
+</div>
+<span class="text-sm font-bold">42%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6">UK</span>
+<span class="text-sm">المملكة المتحدة</span>
+</div>
+<span class="text-sm font-bold">18%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6">DE</span>
+<span class="text-sm">ألمانيا</span>
+</div>
+<span class="text-sm font-bold">12%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6">IN</span>
+<span class="text-sm">الهند</span>
+</div>
+<span class="text-sm font-bold">9%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Top Pages & AI Insights -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+<!-- Top Pages Table -->
+<div class="bg-surface-container rounded-xl overflow-hidden">
+<div class="p-8 pb-4">
+<h3 class="text-lg font-bold">الأداء حسب المحتوى</h3>
+<p class="text-xs text-on-surface-variant">الصفحات عالية حركة المرور ومحفزات التحويل</p>
+</div>
+<table class="w-full text-right">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-8 py-3 text-xs font-bold text-on-surface-variant">مسار الصفحة</th>
+<th class="px-8 py-3 text-xs font-bold text-on-surface-variant text-left">الزوار</th>
+<th class="px-8 py-3 text-xs font-bold text-on-surface-variant text-left">الارتداد</th>
+<th class="px-8 py-3 text-xs font-bold text-on-surface-variant text-left">نقاط الذكاء الاصطناعي</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-8 py-4 text-sm font-medium" dir="ltr">/dashboard/overview</td>
+<td class="px-8 py-4 text-sm text-left">42,104</td>
+<td class="px-8 py-4 text-sm text-left">12%</td>
+<td class="px-8 py-4 text-left">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded text-[10px] font-bold">ممتاز</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-8 py-4 text-sm font-medium" dir="ltr">/solutions/ai-tracking</td>
+<td class="px-8 py-4 text-sm text-left">38,922</td>
+<td class="px-8 py-4 text-sm text-left">24%</td>
+<td class="px-8 py-4 text-left">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded text-[10px] font-bold">جيد</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-8 py-4 text-sm font-medium" dir="ltr">/pricing/enterprise</td>
+<td class="px-8 py-4 text-sm text-left">12,450</td>
+<td class="px-8 py-4 text-sm text-left">41%</td>
+<td class="px-8 py-4 text-left">
+<span class="px-2 py-1 bg-tertiary/10 text-tertiary rounded text-[10px] font-bold">تحسين</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-8 py-4 text-sm font-medium" dir="ltr">/blog/future-of-data</td>
+<td class="px-8 py-4 text-sm text-left">9,102</td>
+<td class="px-8 py-4 text-sm text-left">68%</td>
+<td class="px-8 py-4 text-left">
+<span class="px-2 py-1 bg-outline-variant/20 text-on-surface-variant rounded text-[10px] font-bold">محايد</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- AI Curator Insight Panel -->
+<div class="bg-surface-container-low border border-primary/20 rounded-xl p-8 relative flex flex-col gap-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="psychology" data-weight="fill" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<h3 class="text-lg font-bold">منسق ذكاء EYE</h3>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container-high p-4 rounded-lg border-r-4 border-primary">
+<h4 class="text-sm font-bold text-primary mb-1">تم اكتشاف انخفاض في التحويل</h4>
+<p class="text-sm text-on-surface-variant">لقد حددنا زيادة بنسبة 15% في معدلات الارتداد لمستخدمي الجوال في صفحة التسعير. يقترح نظامنا تبسيط رأس التنقل للشاشات الصغيرة.</p>
+</div>
+<div class="bg-surface-container-high p-4 rounded-lg border-r-4 border-tertiary">
+<h4 class="text-sm font-bold text-tertiary mb-1">تحديد شريحة ذات نية عالية</h4>
+<p class="text-sm text-on-surface-variant">زارت مجموعة من 1200 زائر من برلين صفحة "المؤسسات" أكثر من 3 مرات اليوم. فكر في حملة توعية محلية لهذه المنطقة.</p>
+</div>
+<div class="bg-surface-container-high p-4 rounded-lg border-r-4 border-secondary">
+<h4 class="text-sm font-bold text-secondary mb-1">نصيحة التوسع التنبؤية</h4>
+<p class="text-sm text-on-surface-variant">من المتوقع أن يرتفع عدد الزيارات بنسبة 30% غدًا بسبب ميزة "تقنيات الذكاء الاصطناعي" في الأخبار العالمية. تأكد من تحسين موازنات أحمال الخادم.</p>
+</div>
+</div>
+<button class="mt-auto py-3 bg-surface-container text-primary font-bold rounded-lg border border-primary/20 hover:bg-primary/5 transition-all text-sm uppercase tracking-widest">
+                        إصدار تدقيق ذكاء كامل
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="lg:pr-64 bg-slate-950 border-t border-slate-800">
+<div class="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<span class="text-lg font-bold text-indigo-200">EYE</span>
+<p class="text-slate-500 text-sm max-w-md">© 2024 EYE AI لتتبع الزوار. جميع الحقوق محفوظة. توفير ذكاء متطور للمنسق الرقمي.</p>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-4 items-center md:justify-end">
+<a class="text-slate-500 hover:text-indigo-200 transition-colors text-sm" href="#">سياسة الخصوصية</a>
+<a class="text-slate-500 hover:text-indigo-200 transition-colors text-sm" href="#">شروط الخدمة</a>
+<a class="text-slate-500 hover:text-indigo-200 transition-colors text-sm" href="#">اتصل بنا</a>
+<a class="text-slate-500 hover:text-indigo-200 transition-colors text-sm" href="#">وثائق API</a>
+</div>
+</div>
+</footer>
+</body></html>

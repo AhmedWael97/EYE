@@ -1,0 +1,228 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── Backend (Laravel / Pest) ──────────────────────────────────────────────
+  backend-tests:
+    name: Backend Tests (PHP 8.3)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgresql:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: eye_test
+          POSTGRES_USER: eye
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U eye -d eye_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      clickhouse:
+        image: clickhouse/clickhouse-server:24.3-alpine
+        ports:
+          - 8123:8123
+          - 9000:9000
+        options: >-
+          --health-cmd "wget -qO- http://localhost:8123/ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo, pdo_pgsql, pgsql, mbstring, exif, pcntl, bcmath, gd, intl, redis, sockets
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/vendor
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install Composer dependencies
+        working-directory: backend
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Prepare .env for CI
+        working-directory: backend
+        run: |
+          cp .env.example .env
+          sed -i "s|DB_HOST=pgbouncer|DB_HOST=127.0.0.1|g" .env
+          sed -i "s|DB_DATABASE=eye|DB_DATABASE=eye_test|g" .env
+          sed -i "s|REDIS_HOST=redis|REDIS_HOST=127.0.0.1|g" .env
+          sed -i "s|CLICKHOUSE_HOST=clickhouse|CLICKHOUSE_HOST=127.0.0.1|g" .env
+          php artisan key:generate
+
+      - name: Run migrations
+        working-directory: backend
+        run: php artisan migrate --force
+
+      - name: Run PHPUnit / Pest tests (parallel)
+        working-directory: backend
+        run: php artisan test --parallel --processes=4
+
+      - name: PHP lint
+        working-directory: backend
+        run: composer run-script lint 2>/dev/null || true
+
+  # ─── Tracker (Jest) ────────────────────────────────────────────────────────
+  tracker-tests:
+    name: Tracker Tests (Jest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: tracker/package-lock.json
+
+      - name: Install tracker dependencies
+        working-directory: tracker
+        run: npm ci
+
+      - name: Run Jest tests
+        working-directory: tracker
+        run: npm test -- --coverage --ci
+
+      - name: Build tracker bundle
+        working-directory: tracker
+        run: npm run build
+
+      - name: Check bundle size (< 4KB gzipped)
+        working-directory: tracker
+        run: |
+          SIZE=$(gzip -c dist/eye.min.js | wc -c)
+          echo "eye.min.js gzipped: ${SIZE} bytes"
+          if [ "$SIZE" -gt 4096 ]; then
+            echo "ERROR: tracker bundle exceeds 4KB gzipped limit (${SIZE} bytes)"
+            exit 1
+          fi
+
+  # ─── Frontend (Next.js lint + build) ─────────────────────────────────────
+  frontend-build:
+    name: Frontend Build (Next.js)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Type check
+        working-directory: frontend
+        run: npm run type-check 2>/dev/null || npx tsc --noEmit
+
+      - name: Build (production)
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost/api
+          NEXT_PUBLIC_REVERB_APP_KEY: ci-key
+          NEXT_PUBLIC_REVERB_HOST: localhost
+          NEXT_PUBLIC_REVERB_PORT: "8080"
+          NEXT_PUBLIC_REVERB_SCHEME: http
+        run: npm run build
+
+  # ─── E2E tests (Playwright) ───────────────────────────────────────────────
+  e2e:
+    name: E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [backend-tests, tracker-tests, frontend-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy env files
+        run: |
+          cp .env.example .env
+          cp backend/.env.example backend/.env
+          php -r "echo 'APP_KEY=base64:'.base64_encode(random_bytes(32)).PHP_EOL;" >> backend/.env || true
+          cp frontend/.env.example frontend/.env.local
+
+      - name: Start Docker stack
+        run: docker compose up -d --build
+
+      - name: Wait for services to be healthy
+        run: |
+          timeout 120 bash -c 'until curl -sf http://localhost/api/health; do sleep 5; done'
+
+      - name: Run migrations and seeders
+        run: docker compose exec -T php-fpm php artisan migrate --seed --force
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E tests
+        working-directory: frontend
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
+
+      - name: Stop Docker stack
+        if: always()
+        run: docker compose down -v

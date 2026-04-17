@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EYE - Funnel Builder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-tertiary-fixed-variant": "#703700",
+                "tertiary": "#ffb783",
+                "outline-variant": "#464554",
+                "on-error": "#690005",
+                "secondary": "#d0bcff",
+                "secondary-container": "#571bc1",
+                "surface-tint": "#c0c1ff",
+                "error": "#ffb4ab",
+                "on-secondary": "#3c0091",
+                "on-secondary-container": "#c4abff",
+                "surface-bright": "#31394d",
+                "tertiary-fixed": "#ffdcc5",
+                "on-tertiary-container": "#452000",
+                "surface-container": "#171f33",
+                "on-primary": "#1000a9",
+                "on-background": "#dae2fd",
+                "inverse-on-surface": "#283044",
+                "surface-container-highest": "#2d3449",
+                "on-primary-fixed-variant": "#2f2ebe",
+                "inverse-surface": "#dae2fd",
+                "primary": "#c0c1ff",
+                "on-primary-container": "#0d0096",
+                "primary-container": "#8083ff",
+                "on-tertiary-fixed": "#301400",
+                "tertiary-container": "#d97721",
+                "outline": "#908fa0",
+                "on-secondary-fixed": "#23005c",
+                "on-error-container": "#ffdad6",
+                "surface-container-high": "#222a3d",
+                "primary-fixed-dim": "#c0c1ff",
+                "surface": "#0b1326",
+                "surface-container-low": "#131b2e",
+                "background": "#0b1326",
+                "secondary-fixed-dim": "#d0bcff",
+                "tertiary-fixed-dim": "#ffb783",
+                "surface-dim": "#0b1326",
+                "secondary-fixed": "#e9ddff",
+                "on-surface-variant": "#c7c4d7",
+                "surface-variant": "#2d3449",
+                "surface-container-lowest": "#060e20",
+                "on-secondary-fixed-variant": "#5516be",
+                "primary-fixed": "#e1e0ff",
+                "on-surface": "#dae2fd",
+                "on-primary-fixed": "#07006c",
+                "on-tertiary": "#4f2500",
+                "inverse-primary": "#494bd6",
+                "error-container": "#93000a"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "fontFamily": {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #0b1326;
+        color: #dae2fd;
+      }
+      .glass-card {
+        background: rgba(45, 52, 73, 0.6);
+        backdrop-filter: blur(20px);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #464554;
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface custom-scrollbar">
+<!-- TopNavBar Component -->
+<header class="flex justify-between items-center w-full px-8 h-16 sticky top-0 z-50 bg-[#0b1326] dark:bg-[#0b1326] shadow-[0px_20px_40px_rgba(7,0,108,0.2)]">
+<div class="flex items-center space-x-12">
+<div class="text-xl font-black tracking-tighter text-[#c0c1ff] uppercase">EYE</div>
+<nav class="hidden md:flex space-x-8">
+<a class="text-[#d0bcff]/70 hover:text-[#c0c1ff] font-['Inter'] font-normal text-sm tracking-tight cursor-pointer active:scale-95 transition-colors duration-300" href="#">Dashboard</a>
+<a class="text-[#d0bcff]/70 hover:text-[#c0c1ff] font-['Inter'] font-normal text-sm tracking-tight cursor-pointer active:scale-95 transition-colors duration-300" href="#">UX Intelligence</a>
+<a class="text-[#c0c1ff] border-b-2 border-[#c0c1ff] pb-1 font-bold font-['Inter'] text-sm tracking-tight cursor-pointer active:scale-95" href="#">Funnel Builder</a>
+</nav>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-[#c0c1ff] cursor-pointer hover:bg-[#171f33] p-1 rounded transition-colors duration-300">notifications</span>
+<span class="material-symbols-outlined text-[#c0c1ff] cursor-pointer hover:bg-[#171f33] p-1 rounded transition-colors duration-300">help</span>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold py-2 px-4 rounded-lg cursor-pointer active:scale-95 transition-all">Add Domain</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="close-up portrait of a professional woman with a soft confident expression in a tech office setting with blue ambient light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqpO4ob_Iyxi6yQN2-GCFrWTyHH7sKCr9_42EVE32NMYABpzIoVzNxDYwmVLQfqpPXFYtvqygZKATgpKYi1-UnOZ_ZO-7DEKb0u0TrQmGgCW0K7D6mLW_6yDP0OuImRbx_e1mzHldS_qq8z92cpOOiHNa4Ftu44nyZDs47kn-tEI04AhTnCjexYoeTjr9o4QDzjRwN5PzcRtOaOzBrzTcn9NYPqR4oVSARmKhpTrlUL6eO1WYSZSFV4P-6HH4wcWfPxIVfqlA7ynn-"/>
+</div>
+</div>
+</header>
+<div class="flex">
+<!-- SideNavBar Component -->
+<aside class="flex flex-col h-screen p-4 space-y-6 bg-[#131b2e] dark:bg-[#131b2e] h-full w-64 fixed left-0 top-0 pt-20">
+<div class="px-2 pb-4">
+<h2 class="text-lg font-bold text-[#c0c1ff]">The Digital Curator</h2>
+<p class="text-xs text-[#d0bcff]/60 uppercase tracking-widest mt-1">AI Visitor Tracking</p>
+</div>
+<nav class="flex-1 space-y-2 font-['Inter'] text-sm font-medium tracking-wide">
+<a class="flex items-center space-y-0 space-x-3 p-3 text-[#d0bcff]/60 hover:bg-[#171f33] hover:text-[#c0c1ff] rounded-lg transition-all duration-200 scale-100 hover:scale-[1.02] active:scale-95" href="#">
+<span class="material-symbols-outlined">sensors</span>
+<span>Live Feed</span>
+</a>
+<a class="flex items-center space-y-0 space-x-3 p-3 bg-gradient-to-r from-[#c0c1ff] to-[#8083ff] text-[#0b1326] rounded-lg font-bold shadow-lg transition-all duration-200 scale-100 hover:scale-[1.02] active:scale-95" href="#">
+<span class="material-symbols-outlined">filter_alt</span>
+<span>Funnels</span>
+</a>
+<a class="flex items-center space-y-0 space-x-3 p-3 text-[#d0bcff]/60 hover:bg-[#171f33] hover:text-[#c0c1ff] rounded-lg transition-all duration-200 scale-100 hover:scale-[1.02] active:scale-95" href="#">
+<span class="material-symbols-outlined">wb_sunny</span>
+<span>Heatmaps</span>
+</a>
+<a class="flex items-center space-y-0 space-x-3 p-3 text-[#d0bcff]/60 hover:bg-[#171f33] hover:text-[#c0c1ff] rounded-lg transition-all duration-200 scale-100 hover:scale-[1.02] active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center space-y-0 space-x-3 p-3 text-[#d0bcff]/60 hover:bg-[#171f33] hover:text-[#c0c1ff] rounded-lg transition-all duration-200 scale-100 hover:scale-[1.02] active:scale-95" href="#">
+<span class="material-symbols-outlined">security</span>
+<span>Security</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-outline-variant/15 space-y-2">
+<a class="flex items-center space-x-3 p-3 text-[#d0bcff]/60 hover:bg-[#171f33] hover:text-[#c0c1ff] rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span>Support</span>
+</a>
+<a class="flex items-center space-x-3 p-3 text-[#d0bcff]/60 hover:bg-[#171f33] hover:text-[#c0c1ff] rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 p-8 min-h-screen bg-surface">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-12">
+<div>
+<h1 class="text-[3.5rem] font-black tracking-tighter text-on-surface mb-2 leading-none">Funnel Builder</h1>
+<p class="text-on-surface-variant font-medium text-lg">Curating the visitor journey for <span class="text-primary">eyemarketing.ai</span></p>
+</div>
+<div class="flex space-x-4">
+<div class="glass-card p-6 rounded-xl border border-outline-variant/10 min-w-[200px]">
+<span class="text-[0.6875rem] font-bold uppercase tracking-widest text-secondary block mb-1">Conversion Rate</span>
+<div class="flex items-baseline space-x-2">
+<span class="text-3xl font-bold">12.4%</span>
+<span class="text-tertiary text-sm flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>+2.1%
+                            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Left: Funnel Flow Editor -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<div class="bg-surface-container-low rounded-xl p-8 relative overflow-hidden group">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-xl font-bold tracking-tight">Active Step Editor</h3>
+<div class="bg-surface-container-high rounded-full px-4 py-1.5 flex items-center space-x-2 text-xs font-semibold text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>LIVE EDITING MODE</span>
+</div>
+</div>
+<!-- Drag and Drop Step UI -->
+<div class="space-y-4">
+<!-- Step 1 -->
+<div class="bg-surface-container border-l-4 border-primary p-5 rounded-lg flex items-center justify-between group/step cursor-grab active:cursor-grabbing hover:bg-surface-container-high transition-colors">
+<div class="flex items-center space-x-6">
+<div class="text-2xl font-black text-outline-variant/30 italic">01</div>
+<div>
+<h4 class="font-bold text-on-surface">Landing Page (Home)</h4>
+<p class="text-xs text-on-surface-variant">URL contains /index.html</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 opacity-0 group-hover/step:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">edit</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-error">delete</span>
+<span class="material-symbols-outlined text-outline-variant">drag_indicator</span>
+</div>
+</div>
+<!-- Connection Line -->
+<div class="flex justify-center -my-2 relative z-10">
+<div class="h-6 w-0.5 bg-gradient-to-b from-primary to-secondary-container"></div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container border-l-4 border-secondary p-5 rounded-lg flex items-center justify-between group/step cursor-grab active:cursor-grabbing hover:bg-surface-container-high transition-colors">
+<div class="flex items-center space-x-6">
+<div class="text-2xl font-black text-outline-variant/30 italic">02</div>
+<div>
+<h4 class="font-bold text-on-surface">Product Features Exploration</h4>
+<p class="text-xs text-on-surface-variant">Targeting scroll depth &gt; 50%</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 opacity-0 group-hover/step:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">edit</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-error">delete</span>
+<span class="material-symbols-outlined text-outline-variant">drag_indicator</span>
+</div>
+</div>
+<!-- Connection Line -->
+<div class="flex justify-center -my-2 relative z-10">
+<div class="h-6 w-0.5 bg-gradient-to-b from-secondary-container to-surface-container-highest"></div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container border-l-4 border-surface-container-highest p-5 rounded-lg flex items-center justify-between group/step cursor-grab active:cursor-grabbing hover:bg-surface-container-high transition-colors">
+<div class="flex items-center space-x-6">
+<div class="text-2xl font-black text-outline-variant/30 italic">03</div>
+<div>
+<h4 class="font-bold text-on-surface">Pricing Plan Selection</h4>
+<p class="text-xs text-on-surface-variant">Click event on "Choose Plan"</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 opacity-0 group-hover/step:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">edit</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-error">delete</span>
+<span class="material-symbols-outlined text-outline-variant">drag_indicator</span>
+</div>
+</div>
+<!-- Add Step Ghost -->
+<button class="w-full py-4 border-2 border-dashed border-outline-variant/30 rounded-lg text-on-surface-variant hover:border-primary/50 hover:text-primary transition-all flex items-center justify-center space-x-2 font-bold uppercase tracking-widest text-xs">
+<span class="material-symbols-outlined">add_circle</span>
+<span>Inject New Journey Step</span>
+</button>
+</div>
+</div>
+<!-- Horizontal Stats Row -->
+<div class="grid grid-cols-3 gap-6">
+<div class="bg-surface-container-low p-6 rounded-xl">
+<span class="text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant block mb-4">AVG. TIME TO CONVERT</span>
+<div class="text-2xl font-bold">4m 22s</div>
+<div class="mt-2 text-xs text-error font-medium">-15s vs last week</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<span class="text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant block mb-4">REVENUE POTENTIAL</span>
+<div class="text-2xl font-bold">$14.2k</div>
+<div class="mt-2 text-xs text-primary font-medium">+12% increase probability</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<span class="text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant block mb-4">ABANDONMENT RATE</span>
+<div class="text-2xl font-bold">87.6%</div>
+<div class="mt-2 text-xs text-tertiary font-medium">Critical point at Step 2</div>
+</div>
+</div>
+</div>
+<!-- Right: Visualization & AI Insights -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<!-- Funnel Bar Chart -->
+<div class="bg-surface-container p-6 rounded-xl h-[420px] flex flex-col">
+<h3 class="text-lg font-bold tracking-tight mb-8">Drop-off Analysis</h3>
+<div class="flex-1 flex flex-col justify-between pt-4">
+<!-- Step 1 Bar -->
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface">Home</span>
+<span class="text-primary">100%</span>
+</div>
+<div class="h-6 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-full bg-gradient-to-r from-primary to-primary-container"></div>
+</div>
+</div>
+<!-- Drop Down Percent -->
+<div class="flex justify-center">
+<span class="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-black">-45% Drop</span>
+</div>
+<!-- Step 2 Bar -->
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface">Features</span>
+<span class="text-secondary">55%</span>
+</div>
+<div class="h-6 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-[55%] bg-gradient-to-r from-secondary to-secondary-container"></div>
+</div>
+</div>
+<!-- Drop Down Percent -->
+<div class="flex justify-center">
+<span class="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-black">-32% Drop</span>
+</div>
+<!-- Step 3 Bar -->
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface">Pricing</span>
+<span class="text-on-surface-variant">23%</span>
+</div>
+<div class="h-6 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-[23%] bg-surface-variant"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Insights Card -->
+<div class="bg-primary/5 rounded-xl p-6 border border-primary/20 relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-10">
+<span class="material-symbols-outlined text-[100px]" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+<div class="flex items-center space-x-2 mb-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="text-[0.6875rem] font-bold uppercase tracking-widest text-primary">Digital Curator Intelligence</span>
+</div>
+<p class="text-sm leading-relaxed text-on-surface-variant mb-4">
+                            We've detected a significant bottleneck at Step 2. Users with <span class="text-secondary font-bold">mobile viewports</span> are dropping off 3x faster than desktop users.
+                        </p>
+<div class="bg-secondary-container/20 p-3 rounded-lg flex items-start space-x-3">
+<span class="material-symbols-outlined text-secondary text-sm">lightbulb</span>
+<p class="text-xs font-medium text-secondary">Suggested: Implement a sticky CTA button for mobile resolutions on the /features page.</p>
+</div>
+<button class="w-full mt-4 bg-primary/20 hover:bg-primary/30 text-primary py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all">Apply Optimization</button>
+</div>
+<!-- Quick View Thumbnail -->
+<div class="rounded-xl overflow-hidden aspect-video relative group cursor-pointer">
+<img alt="Heatmap preview" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="vibrant abstract digital heatmap visualization with glowing cyan and magenta nodes on a dark technical background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaFFMnNc8Ud0lFDdL-YMIzwgJllHOUVAoGnYXxDqoij-JUezETffSCIBsvT-Kzs4xOxPnXWPdlG5YfRTXgO3LTM-uWhoamZGBHbCWxVXWwy1NRyXazp8_9z9X4OZG3QEXy0uX4iyyiHXmNmDhwXsA2K6ZFLuftHPaCmvvMoqQEMRKxMuJYH6AL2VOfZAWtdA_eh7JU11mujrFvaTG6QJr2icGRrQzfcjZYqlA2hvtQkrL6DL9BAttqVMaJ2L0tw9EEiccfL2iZH-94"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-80"></div>
+<div class="absolute bottom-4 left-4">
+<span class="text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant">Real-time Traffic Origin</span>
+<p class="text-sm font-bold">Global Interaction Nodes</p>
+</div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-surface/40 backdrop-blur-sm">
+<span class="material-symbols-outlined text-4xl">visibility</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Floating Action Button -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</button>
+</body></html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EYE | AI Visitor Intelligence Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#6200ee",
+                    "error-container": "#f9dedc",
+                    "primary": "#4f46e5",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "outline": "#79747e",
+                    "on-secondary-fixed": "#21005d",
+                    "on-tertiary-fixed": "#311100",
+                    "inverse-on-surface": "#f4eff4",
+                    "tertiary": "#964900",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#fef7ff",
+                    "tertiary-fixed-dim": "#ffb68e",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#e0e0ff",
+                    "on-surface-variant": "#49454f",
+                    "primary-fixed": "#e0e0ff",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#ffdcbe",
+                    "error": "#b3261e",
+                    "on-primary-fixed-variant": "#3c38cf",
+                    "on-tertiary-container": "#311100",
+                    "on-secondary-container": "#1d0061",
+                    "surface-container-low": "#f7f2fa",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffdcbe",
+                    "surface-container-high": "#ece6f0",
+                    "on-primary-container": "#1000a9",
+                    "outline-variant": "#cac4d0",
+                    "surface-container-highest": "#e6e1e5",
+                    "on-surface": "#1d1b20",
+                    "background": "#f8fafc",
+                    "surface-variant": "#e7e0ec",
+                    "secondary-container": "#e8def8",
+                    "surface": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#f3f0f5",
+                    "inverse-primary": "#c0c1ff",
+                    "on-error-container": "#410002",
+                    "on-primary-fixed": "#1000a9",
+                    "surface-tint": "#4f46e5",
+                    "on-background": "#1d1b20",
+                    "inverse-surface": "#322f35",
+                    "secondary-fixed": "#e8def8",
+                    "on-secondary-fixed-variant": "#4a00bc",
+                    "surface-dim": "#ded8e1",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "secondary-fixed-dim": "#d0bcff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary/30 selection:text-primary">
+<!-- TopNavBar (Shared Component Execution) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-primary">EYE</span>
+<!-- Domain Selector (Contextual Command) -->
+<div class="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition-colors border border-slate-200">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="domain">domain</span>
+<span class="text-sm font-semibold text-slate-700">analytics.eye-ai.io</span>
+<span class="material-symbols-outlined text-xs text-slate-400" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-primary border-b-2 border-primary pb-1 font-inter font-semibold tracking-tight" href="#">Overview</a>
+<a class="text-slate-500 hover:text-primary transition-all font-inter tracking-tight" href="#">Realtime</a>
+<a class="text-slate-500 hover:text-primary transition-all font-inter tracking-tight" href="#">Funnels</a>
+<a class="text-slate-500 hover:text-primary transition-all font-inter tracking-tight" href="#">AI Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border border-slate-200">
+<img alt="User" data-alt="Portrait of a professional user for a profile avatar, soft studio lighting, minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtV-zJNcdNYUq0lQt5kUZI-8qVsovmhYi8Mw8_NKlBsTpygOp5Buyzw1_fNX6pXa9i7bjH0ytJe3vORU6TVfWpFihrFanE6Nwmi-DEVjoBooXH4GKbuMVJ7fqG64epVCxsmvam9Invuxtxki7PisSqG4D3io7f3gQ_AVjTDCFkj6IBM-dW59iDSrwrFHiqNXDOcdJdVU7zeXP3_Zz2wj_JLly1ZZW5FfJdYR9ZbwhoCwo47RVuOtA5gxkFm0V3a8y1fBiorQwpxlHq"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Left Fixed Shell Execution) -->
+<aside class="hidden lg:flex flex-col h-screen p-4 gap-2 h-full w-64 fixed left-0 top-0 bg-white pt-24 border-r border-slate-200">
+<div class="mb-6 px-4">
+<p class="text-[0.6875rem] uppercase tracking-[0.05em] font-bold text-slate-400">Visitor Intelligence</p>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-primary font-bold rounded-lg transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-inter text-sm font-semibold">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="font-inter text-sm font-medium">Realtime</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-inter text-sm font-medium">Visitors</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-inter text-sm font-medium">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="filter_alt">filter_alt</span>
+<span class="font-inter text-sm font-medium">Funnels</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-inter text-sm font-medium">AI</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-inter text-sm font-medium">Settings</span>
+</a>
+<div class="mt-auto pt-6 border-t border-slate-100">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-inter text-sm font-medium">Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-inter text-sm font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:pl-64 pt-24 min-h-screen">
+<div class="max-w-[1600px] mx-auto p-8 flex flex-col gap-8">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+<div class="space-y-1">
+<h1 class="text-[1.75rem] font-bold leading-tight tracking-tight text-slate-900">Executive Dashboard</h1>
+<p class="text-slate-500 text-sm">Reviewing 30-day visitor trends and AI behavioral signals.</p>
+</div>
+<div class="flex gap-4">
+<div class="px-4 py-2 bg-white rounded-lg border border-slate-200 flex items-center gap-2 text-slate-700 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+<span class="text-sm font-semibold">Last 30 Days</span>
+</div>
+<button class="px-6 py-2 signature-glow rounded-lg text-white font-bold shadow-lg shadow-indigo-200 scale-95 active:scale-90 transition-transform">
+                    Download Report
+                </button>
+</div>
+</div>
+<!-- KPI Cards Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+<!-- Card 1: Visitors -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 relative overflow-hidden group shadow-sm hover:border-indigo-200 transition-colors">
+<div class="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-indigo-50 transition-colors">
+<span class="material-symbols-outlined text-6xl" data-icon="visibility">visibility</span>
+</div>
+<p class="text-[0.6875rem] font-bold text-slate-400 uppercase tracking-[0.05em] mb-4">Unique Visitors</p>
+<div class="flex items-baseline gap-3 relative z-10">
+<span class="text-3xl font-extrabold tracking-tighter text-slate-900">142,802</span>
+<span class="text-sm font-bold text-emerald-600 flex items-center">+12.4%</span>
+</div>
+<div class="mt-4 h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4 rounded-full"></div>
+</div>
+</div>
+<!-- Card 2: Sessions -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 relative overflow-hidden group shadow-sm hover:border-indigo-200 transition-colors">
+<div class="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-indigo-50 transition-colors">
+<span class="material-symbols-outlined text-6xl" data-icon="schedule">schedule</span>
+</div>
+<p class="text-[0.6875rem] font-bold text-slate-400 uppercase tracking-[0.05em] mb-4">Total Sessions</p>
+<div class="flex items-baseline gap-3 relative z-10">
+<span class="text-3xl font-extrabold tracking-tighter text-slate-900">289,114</span>
+<span class="text-sm font-bold text-rose-500 flex items-center">-2.1%</span>
+</div>
+<div class="mt-4 h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+<div class="h-full bg-indigo-400 w-1/2 rounded-full"></div>
+</div>
+</div>
+<!-- Card 3: Avg Time -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 relative overflow-hidden group shadow-sm hover:border-indigo-200 transition-colors">
+<div class="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-indigo-50 transition-colors">
+<span class="material-symbols-outlined text-6xl" data-icon="timer">timer</span>
+</div>
+<p class="text-[0.6875rem] font-bold text-slate-400 uppercase tracking-[0.05em] mb-4">Avg. Session Time</p>
+<div class="flex items-baseline gap-3 relative z-10">
+<span class="text-3xl font-extrabold tracking-tighter text-slate-900">04:22</span>
+<span class="text-sm font-bold text-emerald-600 flex items-center">+18%</span>
+</div>
+<div class="mt-4 h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+<div class="h-full signature-glow w-2/3 rounded-full"></div>
+</div>
+</div>
+<!-- Card 4: Bounce Rate -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 relative overflow-hidden group shadow-sm hover:border-indigo-200 transition-colors">
+<div class="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-indigo-50 transition-colors">
+<span class="material-symbols-outlined text-6xl" data-icon="output">output</span>
+</div>
+<p class="text-[0.6875rem] font-bold text-slate-400 uppercase tracking-[0.05em] mb-4">Bounce Rate</p>
+<div class="flex items-baseline gap-3 relative z-10">
+<span class="text-3xl font-extrabold tracking-tighter text-slate-900">24.8%</span>
+<span class="text-sm font-bold text-slate-400">Stable</span>
+</div>
+<div class="mt-4 h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 w-1/4 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Central Data Visualisation -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- Large Area Chart (Main) -->
+<div class="xl:col-span-2 bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-6">
+<div class="flex justify-between items-center">
+<div>
+<h3 class="text-lg font-bold text-slate-900">Visitor Flow Analysis</h3>
+<p class="text-xs text-slate-500">Daily unique sessions across all devices</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-xs font-semibold text-slate-600">Desktop</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-indigo-300"></span>
+<span class="text-xs font-semibold text-slate-600">Mobile</span>
+</div>
+</div>
+</div>
+<div class="h-[400px] w-full relative flex items-end gap-1 bg-slate-50/50 rounded-lg p-4">
+<!-- Abstract Chart Representation -->
+<div class="w-full h-full absolute inset-0 flex items-end opacity-[0.03] pointer-events-none">
+<div class="flex-1 bg-primary" style="height: 40%"></div>
+<div class="flex-1 bg-primary" style="height: 55%"></div>
+<div class="flex-1 bg-primary" style="height: 45%"></div>
+<div class="flex-1 bg-primary" style="height: 70%"></div>
+<div class="flex-1 bg-primary" style="height: 85%"></div>
+<div class="flex-1 bg-primary" style="height: 75%"></div>
+<div class="flex-1 bg-primary" style="height: 90%"></div>
+<div class="flex-1 bg-primary" style="height: 60%"></div>
+<div class="flex-1 bg-primary" style="height: 50%"></div>
+<div class="flex-1 bg-primary" style="height: 45%"></div>
+</div>
+<div class="w-full h-full flex items-end overflow-hidden z-10">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 1000 400">
+<path class="text-primary" d="M0,350 Q50,300 100,320 T200,200 T300,250 T400,100 T500,150 T600,50 T700,180 T800,120 T900,150 T1000,100" fill="none" stroke="currentColor" stroke-width="4"></path>
+<path class="text-indigo-300" d="M0,380 Q50,340 100,360 T200,250 T300,300 T400,180 T500,220 T600,140 T700,250 T800,200 T900,230 T1000,180" fill="none" stroke="currentColor" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="flex justify-between px-2 text-[10px] uppercase font-bold tracking-widest text-slate-400">
+<span>Day 01</span>
+<span>Day 07</span>
+<span>Day 14</span>
+<span>Day 21</span>
+<span>Day 30</span>
+</div>
+</div>
+<!-- World Map & Geo Distribution -->
+<div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-6">
+<div>
+<h3 class="text-lg font-bold text-slate-900">Global Reach</h3>
+<p class="text-xs text-slate-500">Top geographical traffic sources</p>
+</div>
+<div class="relative w-full aspect-video rounded-lg overflow-hidden bg-slate-50 border border-slate-200">
+<img class="w-full h-full object-cover opacity-80" data-alt="Light colored stylized world map with subtle traffic point highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjeNixWYTJECfFbGNe9ZjrHBby_Bb1baNqpXl5xmP2SaDDtkv4CSn06EckLse-9ULubV6iLRIS-4N-1J29TP97UXbWHCTp3phaG3gxrOqiOqsGVh0dpITh-94osbJ-jx5Q_2N_cAA6VGGWejL5h22Z3Dgc5hbvVO0NAkj4ITuXjkMgctl-yI4fcF-2YnG1u4TqFV9SkFcAY6XC3bMPCJWLwsNp_btJLmVq4k3gbOv40kobRvN-p8J0LG9_XERaMuEOa9JNLYRymqHh"/>
+<!-- Map Marker Mockups -->
+<div class="absolute top-[30%] left-[20%] w-3 h-3 bg-primary rounded-full animate-pulse shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>
+<div class="absolute top-[40%] left-[50%] w-4 h-4 bg-primary rounded-full animate-pulse shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>
+<div class="absolute top-[60%] left-[75%] w-2 h-2 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(129,140,248,0.5)]"></div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6 text-slate-400">US</span>
+<span class="text-sm text-slate-700">United States</span>
+</div>
+<span class="text-sm font-bold text-slate-900">42%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6 text-slate-400">UK</span>
+<span class="text-sm text-slate-700">United Kingdom</span>
+</div>
+<span class="text-sm font-bold text-slate-900">18%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6 text-slate-400">DE</span>
+<span class="text-sm text-slate-700">Germany</span>
+</div>
+<span class="text-sm font-bold text-slate-900">12%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-6 text-slate-400">IN</span>
+<span class="text-sm text-slate-700">India</span>
+</div>
+<span class="text-sm font-bold text-slate-900">9%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Top Pages & AI Insights -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+<!-- Top Pages Table -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="p-8 pb-4">
+<h3 class="text-lg font-bold text-slate-900">Performance by Content</h3>
+<p class="text-xs text-slate-500">High-traffic pages and conversion triggers</p>
+</div>
+<table class="w-full text-left">
+<thead class="bg-slate-50 border-y border-slate-100">
+<tr>
+<th class="px-8 py-3 text-[0.6875rem] font-bold text-slate-500 uppercase tracking-wider">Page Path</th>
+<th class="px-8 py-3 text-[0.6875rem] font-bold text-slate-500 uppercase tracking-wider text-right">Visitors</th>
+<th class="px-8 py-3 text-[0.6875rem] font-bold text-slate-500 uppercase tracking-wider text-right">Bounce</th>
+<th class="px-8 py-3 text-[0.6875rem] font-bold text-slate-500 uppercase tracking-wider text-right">AI Score</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4 text-sm font-semibold text-slate-700">/dashboard/overview</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">42,104</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">12%</td>
+<td class="px-8 py-4 text-right">
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 rounded text-[10px] font-bold border border-emerald-100 uppercase">Excellent</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4 text-sm font-semibold text-slate-700">/solutions/ai-tracking</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">38,922</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">24%</td>
+<td class="px-8 py-4 text-right">
+<span class="px-2 py-1 bg-indigo-50 text-primary rounded text-[10px] font-bold border border-indigo-100 uppercase">Good</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4 text-sm font-semibold text-slate-700">/pricing/enterprise</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">12,450</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">41%</td>
+<td class="px-8 py-4 text-right">
+<span class="px-2 py-1 bg-amber-50 text-amber-700 rounded text-[10px] font-bold border border-amber-100 uppercase">Optimize</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4 text-sm font-semibold text-slate-700">/blog/future-of-data</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">9,102</td>
+<td class="px-8 py-4 text-sm text-right text-slate-600">68%</td>
+<td class="px-8 py-4 text-right">
+<span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold border border-slate-200 uppercase">Neutral</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- AI Curator Insight Panel -->
+<div class="bg-white border border-indigo-100 rounded-xl p-8 relative flex flex-col gap-6 shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="psychology" data-weight="fill" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<h3 class="text-lg font-bold text-slate-900">EYE Intelligence Curator</h3>
+</div>
+<div class="space-y-4">
+<div class="bg-slate-50 p-4 rounded-lg border-l-4 border-primary">
+<h4 class="text-sm font-bold text-primary mb-1">Conversion Dropoff Detected</h4>
+<p class="text-sm text-slate-600 leading-relaxed">We've identified a 15% increase in bounce rates for mobile users on the pricing page. Our AI suggests simplifying the navigation header for smaller viewports.</p>
+</div>
+<div class="bg-slate-50 p-4 rounded-lg border-l-4 border-amber-500">
+<h4 class="text-sm font-bold text-amber-600 mb-1">High Intent Segment Identified</h4>
+<p class="text-sm text-slate-600 leading-relaxed">A cluster of 1,200 visitors from Berlin have visited the 'Enterprise' page 3+ times today. Consider a localized outreach campaign for this region.</p>
+</div>
+<div class="bg-slate-50 p-4 rounded-lg border-l-4 border-indigo-400">
+<h4 class="text-sm font-bold text-indigo-500 mb-1">Predictive Scaling Advice</h4>
+<p class="text-sm text-slate-600 leading-relaxed">Traffic is projected to spike by 30% tomorrow due to your 'AI Tech' feature in Global News. Ensure server load balancers are optimized.</p>
+</div>
+</div>
+<button class="mt-auto py-3 bg-white text-primary font-bold rounded-lg border border-primary hover:bg-indigo-50 transition-all text-sm uppercase tracking-widest">
+                    Generate Full Intelligence Audit
+                </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Execution -->
+<footer class="lg:pl-64 bg-white border-t border-slate-200">
+<div class="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<span class="text-lg font-black text-primary tracking-tighter">EYE</span>
+<p class="text-slate-500 font-inter text-sm max-w-md">© 2024 EYE AI Visitor Tracking. All rights reserved. Providing sophisticated intelligence for the digital curator.</p>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-4 items-center md:justify-end">
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Privacy Policy</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Terms of Service</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Contact</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">API Docs</a>
+</div>
+</div>
+</footer>
+</body></html>

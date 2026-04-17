@@ -1,0 +1,97 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]        # → staging
+    tags:
+      - "v*"                 # → production
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false  # Never cancel an in-progress deploy
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to staging VPS via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /opt/eye
+            git pull origin main
+            docker compose build --no-cache
+            docker compose up -d
+            docker compose exec -T php-fpm php artisan migrate --force
+            docker compose exec -T php-fpm php artisan config:cache
+            docker compose exec -T php-fpm php artisan route:cache
+            docker compose exec -T php-fpm php artisan view:cache
+            docker compose exec -T php-fpm php artisan horizon:terminate
+            echo "✓ Staging deploy complete"
+
+      - name: Health check
+        run: |
+          sleep 15
+          HTTP=$(curl -o /dev/null -s -w "%{http_code}" https://staging.yourdomain.com/api/health)
+          if [ "$HTTP" != "200" ]; then
+            echo "Health check failed: HTTP $HTTP"
+            exit 1
+          fi
+          echo "✓ Staging health check passed"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Staging deploy failed — check GitHub Actions logs"
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to production VPS via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /opt/eye
+            git fetch --tags
+            git checkout ${{ github.ref_name }}
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build --no-cache
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T php-fpm php artisan migrate --force
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T php-fpm php artisan config:cache
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T php-fpm php artisan route:cache
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T php-fpm php artisan view:cache
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T php-fpm php artisan horizon:terminate
+            echo "✓ Production deploy complete: ${{ github.ref_name }}"
+
+      - name: Health check
+        run: |
+          sleep 20
+          HTTP=$(curl -o /dev/null -s -w "%{http_code}" https://yourdomain.com/api/health)
+          if [ "$HTTP" != "200" ]; then
+            echo "Production health check failed: HTTP $HTTP"
+            exit 1
+          fi
+          echo "✓ Production health check passed"

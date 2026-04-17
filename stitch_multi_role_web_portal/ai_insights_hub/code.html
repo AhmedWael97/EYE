@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Tajawal:wght@200..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#301400",
+                    "primary-container": "#8083ff",
+                    "outline-variant": "#464554",
+                    "surface-container-high": "#222a3d",
+                    "primary": "#c0c1ff",
+                    "on-background": "#dae2fd",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "error": "#ffb4ab",
+                    "on-surface-variant": "#c7c4d7",
+                    "tertiary-fixed-dim": "#ffb783",
+                    "secondary": "#d0bcff",
+                    "on-primary-fixed": "#07006c",
+                    "tertiary-fixed": "#ffdcc5",
+                    "secondary-container": "#571bc1",
+                    "surface-container-highest": "#2d3449",
+                    "surface-variant": "#2d3449",
+                    "secondary-fixed": "#e9ddff",
+                    "outline": "#908fa0",
+                    "surface-tint": "#c0c1ff",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-error": "#690005",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "on-primary": "#1000a9",
+                    "tertiary-container": "#d97721",
+                    "tertiary": "#ffb783",
+                    "on-tertiary-container": "#452000",
+                    "surface-container-low": "#131b2e",
+                    "on-secondary-fixed": "#23005c",
+                    "on-primary-container": "#0d0096",
+                    "inverse-surface": "#dae2fd",
+                    "on-secondary-container": "#c4abff",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary": "#3c0091",
+                    "surface-dim": "#0b1326",
+                    "surface-container": "#171f33",
+                    "surface": "#0b1326",
+                    "inverse-on-surface": "#283044",
+                    "primary-fixed": "#e1e0ff",
+                    "on-tertiary": "#4f2500",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "background": "#0b1326",
+                    "surface-bright": "#31394d",
+                    "surface-container-lowest": "#060e20",
+                    "inverse-primary": "#494bd6",
+                    "error-container": "#93000a",
+                    "on-surface": "#dae2fd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #0b1326;
+        color: #dae2fd;
+        font-family: 'Inter', sans-serif;
+      }
+      .glass-card {
+        background: rgba(45, 52, 73, 0.6);
+        backdrop-filter: blur(20px);
+      }
+      .signature-glow {
+        background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 z-50 w-full px-8 py-4 flex justify-between items-center bg-[#0b1326] shadow-[0px_20px_40px_rgba(7,0,108,0.2)]">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-[#c0c1ff] font-['Inter']">EYE</span>
+<div class="hidden md:flex items-center gap-6">
+<nav class="flex items-center gap-6">
+<a class="text-slate-400 hover:bg-[#171f33] transition-colors px-2 py-1 rounded" href="#">Visitors</a>
+<a class="text-[#c0c1ff] border-b-2 border-[#c0c1ff] pb-1 font-['Inter'] tracking-tight" href="#">Insights</a>
+<a class="text-slate-400 hover:bg-[#171f33] transition-colors px-2 py-1 rounded" href="#">Users</a>
+<a class="text-slate-400 hover:bg-[#171f33] transition-colors px-2 py-1 rounded" href="#">Billing</a>
+</nav>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined text-[#c0c1ff]">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-tertiary rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-[#c0c1ff]">settings</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Administrator Profile" data-alt="Professional administrator profile portrait with neutral lighting and corporate background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRO7mDYmcS0pXbdz4Z2_f8xYlz5NriG7Ja1ByKw0HiOhDuGiy-RRfXvmr4RgcMAO5LMmEkOF-__5Mfw2_ABXFThZqDMxJwz-q8-URG18Gm-9ruG_mLnn4o_nHOtrJlF8hDnDS2ahsY3TV0WShE7adv-_fsdYsHYP-rUEXIz_SbLxD01xMyM2XZE5LcCxQJ9ZnRsJvOwB5Df172D1jDMwEcbZRxuPCZg6ld8BlKEe0X9W2LalDSMOk3UMhqZ0BLiE3fHtbe_ASLv9US"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden lg:flex flex-col h-screen w-64 fixed left-0 top-0 bg-[#131b2e] py-6 z-40">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg signature-glow flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed" style="font-variation-settings: 'FILL' 1;">visibility</span>
+</div>
+<div>
+<div class="text-xl font-bold text-[#c0c1ff]">EYE</div>
+<div class="text-[10px] uppercase tracking-widest text-slate-400">AI Visitor Tracking</div>
+</div>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-3 mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-medium text-sm">Visitors</span>
+</a>
+<a class="flex items-center gap-3 bg-[#2d3449] text-[#c0c1ff] rounded-lg mx-2 px-4 py-3 transition-transform active:translate-x-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-medium text-sm">Insights</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-3 mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined">manage_accounts</span>
+<span class="font-medium text-sm">Users</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-3 mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-medium text-sm">Billing</span>
+</a>
+</nav>
+<div class="px-4 mb-6">
+<button class="w-full signature-glow text-on-primary font-bold py-3 rounded-lg text-sm transition-all active:scale-95 shadow-lg shadow-primary-container/20">
+                Generate Report
+            </button>
+</div>
+<div class="border-t border-outline-variant/10 pt-4 space-y-1">
+<a class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-3 mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="font-medium text-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-3 mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">description</span>
+<span class="font-medium text-sm">Documentation</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 pt-24 min-h-screen p-8 space-y-12">
+<!-- Header Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="text-primary text-xs font-bold tracking-[0.2em] uppercase mb-2 block">Intelligence Dashboard</span>
+<h1 class="text-5xl font-black tracking-tighter text-on-background">AI Insights Hub</h1>
+<p class="text-on-surface-variant max-w-md mt-4 text-sm leading-relaxed">
+                    Real-time behavioral analysis synthesized from over 4.2M touchpoints. Your visitor landscape, curated by EYE AI.
+                </p>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-6">
+<div>
+<div class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Compute Quota</div>
+<div class="w-32 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-3/4 h-full signature-glow"></div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-lg font-bold text-primary">75%</div>
+<div class="text-[10px] text-slate-500">1.2k / 1.6k units</div>
+</div>
+</div>
+<button class="h-14 px-6 rounded-xl border border-primary/20 bg-primary/5 text-primary font-bold flex items-center gap-2 hover:bg-primary/10 transition-colors active:scale-95">
+<span class="material-symbols-outlined">refresh</span>
+                    Re-analyze
+                </button>
+</div>
+</section>
+<!-- Section 1: Audience Segments (Bento Grid) -->
+<section>
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-2xl font-bold tracking-tight">Audience Segments</h2>
+<span class="text-secondary text-sm font-medium">Live sync active</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- High Intent Card -->
+<div class="glass-card p-6 rounded-xl border-l-4 border-primary relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+</div>
+<span class="text-primary font-bold text-2xl">34%</span>
+</div>
+<h3 class="text-xl font-bold mb-2">High Intent</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-4">Users exhibiting repetitive interaction with checkout paths and pricing tiers.</p>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded bg-surface-container-highest text-[10px] font-bold text-primary uppercase">Revenue Driver</span>
+</div>
+</div>
+<!-- Mobile First Card -->
+<div class="glass-card p-6 rounded-xl border-l-4 border-secondary relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl group-hover:bg-secondary/20 transition-all"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-2 bg-secondary/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">smartphone</span>
+</div>
+<span class="text-secondary font-bold text-2xl">58%</span>
+</div>
+<h3 class="text-xl font-bold mb-2">Mobile First</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-4">Traffic originating from handheld devices with high engagement on swipeable assets.</p>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded bg-surface-container-highest text-[10px] font-bold text-secondary uppercase">Interface Priority</span>
+</div>
+</div>
+<!-- Window Shoppers Card -->
+<div class="glass-card p-6 rounded-xl border-l-4 border-tertiary relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-32 h-32 bg-tertiary/10 rounded-full blur-3xl group-hover:bg-tertiary/20 transition-all"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-2 bg-tertiary/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">visibility</span>
+</div>
+<span class="text-tertiary font-bold text-2xl">12%</span>
+</div>
+<h3 class="text-xl font-bold mb-2">Window Shoppers</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-4">Frequent visitors with low scroll depth. Potentially awaiting seasonal promotions.</p>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded bg-surface-container-highest text-[10px] font-bold text-tertiary uppercase">Target for Nurture</span>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- Section 2: Marketing Playbook -->
+<section class="space-y-6">
+<div class="flex items-center gap-4">
+<h2 class="text-2xl font-bold tracking-tight">Marketing Playbook</h2>
+<span class="px-3 py-1 bg-secondary-container/30 text-secondary text-[10px] font-bold rounded-full uppercase tracking-wider">AI Generated</span>
+</div>
+<div class="space-y-4">
+<div class="p-1 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent">
+<div class="bg-surface-container p-6 rounded-[calc(1rem-1px)] flex items-start gap-4">
+<div class="mt-1 w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-bold text-on-background mb-1">Dynamic Pricing Injection</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">Implement real-time discount tokens for the 'Window Shopper' segment during peak active hours (18:00 - 21:00 EST).</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-2xl flex items-start gap-4">
+<div class="mt-1 w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary">ads_click</span>
+</div>
+<div>
+<h4 class="font-bold text-on-background mb-1">Lookalike Retargeting</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">Seed Meta pixel with 'High Intent' metadata to broaden reach towards similar behavior profiles.</p>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-2xl flex items-start gap-4">
+<div class="mt-1 w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-tertiary">speed</span>
+</div>
+<div>
+<h4 class="font-bold text-on-background mb-1">LCP Optimization (Mobile)</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">Lazy-load heavy visual assets specifically for the 'Mobile First' segment to reduce bounce rates by 12%.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Decision Suggestions -->
+<section class="space-y-6">
+<h2 class="text-2xl font-bold tracking-tight">Decision Suggestions</h2>
+<div class="bg-surface-container rounded-2xl overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Recommended Action</span>
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Priority</span>
+</div>
+<div class="divide-y divide-outline-variant/5">
+<div class="p-6 flex items-center justify-between hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-error animate-pulse"></div>
+<span class="text-sm font-medium">Pause underperforming EMEA campaigns</span>
+</div>
+<span class="px-3 py-1 bg-error/10 text-error text-[10px] font-bold rounded-lg uppercase tracking-wider group-hover:bg-error group-hover:text-on-error transition-all">High</span>
+</div>
+<div class="p-6 flex items-center justify-between hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-sm font-medium">Re-route traffic to new Landing V2</span>
+</div>
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary text-[10px] font-bold rounded-lg uppercase tracking-wider group-hover:bg-tertiary group-hover:text-on-tertiary transition-all">Medium</span>
+</div>
+<div class="p-6 flex items-center justify-between hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-sm font-medium">Update metadata for SEO bots</span>
+</div>
+<span class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-lg uppercase tracking-wider group-hover:bg-primary group-hover:text-on-primary transition-all">Low</span>
+</div>
+<div class="p-6 flex items-center justify-between hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-sm font-medium">Increase daily budget for "Search"</span>
+</div>
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary text-[10px] font-bold rounded-lg uppercase tracking-wider group-hover:bg-tertiary group-hover:text-on-tertiary transition-all">Medium</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low text-center">
+<button class="text-primary text-xs font-bold uppercase tracking-widest hover:underline">View All Suggestions (12)</button>
+</div>
+</div>
+<!-- AI Insight Chip Example -->
+<div class="bg-secondary-container/20 border border-secondary/20 p-4 rounded-xl flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary">bolt</span>
+<p class="text-xs text-secondary-fixed font-medium italic">
+                        "EYE has detected a sudden surge in mobile traffic from the DACH region. Suggest immediate localization of checkout assets."
+                    </p>
+</div>
+</section>
+</div>
+</main>
+<!-- Mobile Bottom Nav Bar -->
+<nav class="fixed bottom-0 left-0 w-full bg-[#131b2e] flex md:hidden justify-around items-center py-4 z-50">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px]">Visitors</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#c0c1ff]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="text-[10px]">Insights</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">manage_accounts</span>
+<span class="text-[10px]">Users</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px]">Billing</span>
+</a>
+</nav>
+</body></html>

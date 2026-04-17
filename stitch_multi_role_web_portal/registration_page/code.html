@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register | EYE AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Tajawal:wght@200..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#0b1326",
+                    "tertiary-fixed": "#ffdcc5",
+                    "secondary-container": "#571bc1",
+                    "surface-container-highest": "#2d3449",
+                    "on-secondary-fixed": "#23005c",
+                    "tertiary-container": "#d97721",
+                    "surface-container-lowest": "#060e20",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "on-background": "#dae2fd",
+                    "primary-container": "#8083ff",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "outline": "#908fa0",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "on-error": "#690005",
+                    "surface-container": "#171f33",
+                    "primary": "#c0c1ff",
+                    "on-secondary-container": "#c4abff",
+                    "error": "#ffb4ab",
+                    "secondary-fixed": "#e9ddff",
+                    "on-tertiary": "#4f2500",
+                    "on-tertiary-container": "#452000",
+                    "surface-dim": "#0b1326",
+                    "on-tertiary-fixed": "#301400",
+                    "background": "#0b1326",
+                    "on-surface": "#dae2fd",
+                    "inverse-on-surface": "#283044",
+                    "surface-tint": "#c0c1ff",
+                    "primary-fixed": "#e1e0ff",
+                    "on-error-container": "#ffdad6",
+                    "surface-bright": "#31394d",
+                    "on-surface-variant": "#c7c4d7",
+                    "surface-container-high": "#222a3d",
+                    "outline-variant": "#464554",
+                    "on-primary-fixed": "#07006c",
+                    "on-secondary": "#3c0091",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "secondary": "#d0bcff",
+                    "surface-container-low": "#131b2e",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "inverse-surface": "#dae2fd",
+                    "inverse-primary": "#494bd6",
+                    "surface-variant": "#2d3449",
+                    "error-container": "#93000a",
+                    "tertiary": "#ffb783",
+                    "on-primary": "#1000a9",
+                    "on-primary-container": "#0d0096",
+                    "tertiary-fixed-dim": "#ffb783"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "0.5rem",
+                    "xl": "1rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+        }
+        .glass-panel {
+            background: rgba(45, 52, 73, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .tinted-shadow {
+            box-shadow: 0px 20px 40px rgba(7, 0, 108, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 min-h-screen flex flex-col relative overflow-x-hidden">
+<!-- Subtle Background Ambient Light -->
+<div class="fixed top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="fixed bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<header class="bg-[#0b1326] text-[#c0c1ff] font-['Inter'] tracking-tight flex justify-between items-center w-full px-6 py-4 mx-auto fixed top-0 z-50">
+<div class="text-2xl font-bold tracking-tighter text-[#c0c1ff]">EYE</div>
+<div class="flex gap-4">
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-medium" href="#">Login</a>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center px-4 py-24 relative z-10">
+<div class="w-full max-w-[480px]">
+<!-- Registration Card -->
+<div class="glass-panel tinted-shadow p-8 md:p-12 rounded-xl border border-outline-variant/15 flex flex-col gap-8">
+<div class="space-y-2 text-center md:text-left">
+<span class="label-sm text-secondary uppercase tracking-[0.05em] font-semibold text-[0.6875rem]">Access The Observatory</span>
+<h1 class="text-3xl md:text-4xl font-headline font-bold tracking-tighter text-on-surface">Create Account</h1>
+<p class="text-on-surface-variant text-sm">Join the next generation of observational intelligence.</p>
+</div>
+<!-- Form Section -->
+<form class="space-y-5" onsubmit="return false;">
+<div class="space-y-1.5">
+<label class="label-sm text-on-surface-variant uppercase tracking-[0.05em] text-[0.6875rem] ml-1">Full Name</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary/50 text-on-surface rounded-lg py-3 px-4 placeholder:text-outline/40 transition-all" placeholder="Alex Rivera" type="text"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="label-sm text-on-surface-variant uppercase tracking-[0.05em] text-[0.6875rem] ml-1">Work Email</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary/50 text-on-surface rounded-lg py-3 px-4 placeholder:text-outline/40 transition-all" placeholder="alex@company.com" type="email"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="label-sm text-on-surface-variant uppercase tracking-[0.05em] text-[0.6875rem] ml-1">Password</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary/50 text-on-surface rounded-lg py-3 px-4 placeholder:text-outline/40 transition-all" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<button class="signature-glow w-full py-4 rounded-lg text-on-primary font-bold text-sm tracking-tight scale-95 active:scale-90 transition-transform mt-4 flex items-center justify-center gap-2">
+<span>Get Started</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</form>
+<!-- Divider -->
+<div class="relative py-2">
+<div class="absolute inset-0 flex items-center"><div class="w-full border-t border-outline-variant/15"></div></div>
+<div class="relative flex justify-center text-xs uppercase tracking-widest text-outline/60 bg-transparent px-4">
+<span class="bg-[#1c243a] px-2">Or continue with</span>
+</div>
+</div>
+<!-- Social Buttons -->
+<div class="grid grid-cols-3 gap-3">
+<button class="bg-surface-container-low hover:bg-surface-container-high transition-colors p-3 rounded-lg flex items-center justify-center border border-outline-variant/10">
+<img alt="Google" class="w-5 h-5" data-alt="Google colorful logo icon isolated on transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARrSmRqU-z3uRHLEX85yEPEzEn0dPwTcDxenmJFwenV6lNqgH-SY0JDBkMR_7H6xLUXNUmRHlv1eBW1GDsZh3x5PjedztSk3n2MsuCK0rUFdzyfSuMIS8M7jUYpXou5k-KG0ID09FNkJYZYHpPr3Wgi07EEpUe3iZCkWZTScgJRsceT01ZZxDwB2rux-7cjq78Z0N0qwolV04wnfPoWgAFFA_0zkZe_EIq8zhvbrr9ljEG6r_2ZdKEQ5MM6sp8cPec5HxLcvyhPRN-"/>
+</button>
+<button class="bg-surface-container-low hover:bg-surface-container-high transition-colors p-3 rounded-lg flex items-center justify-center border border-outline-variant/10">
+<svg class="w-5 h-5 fill-on-surface" viewbox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
+</button>
+<button class="bg-surface-container-low hover:bg-surface-container-high transition-colors p-3 rounded-lg flex items-center justify-center border border-outline-variant/10">
+<img alt="Microsoft" class="w-5 h-5" data-alt="Microsoft four-pane colorful square logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcFITgjOHrTF2GeL9XRlQaJOWmv5gZJhw1a8M8pKiYDhyVNnZ5-OZpRpB3Xbl9a58y07IO_3G0IzjpN-6CIfVhg9hlT58srGip25XAf873nYvQPGjYGAWhfAMZhTG08Kdp1YRpedxk0s_bqongjUXJ6BoL4yoCRk0iLv2DA73L127cUAq33doeJ1VmyrQx3dRy8Vj2sUSjnqXW86hGLTlHRNxZOeAOPBbXJ3HtosGqvjk-9RfzucSA12ISJDa7e0mu3i-HT1Lep47"/>
+</button>
+</div>
+<div class="text-center pt-2">
+<p class="text-xs text-on-surface-variant">
+                        Already have an account? 
+                        <a class="text-primary font-semibold hover:underline decoration-primary/30 underline-offset-4 transition-all ml-1" href="#">Log in</a>
+</p>
+</div>
+</div>
+<!-- Footer Meta Links -->
+<div class="mt-12 flex justify-center items-center gap-6 text-[0.625rem] tracking-[0.1em] uppercase text-outline/50 font-label">
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<span class="w-1 h-1 rounded-full bg-outline/20"></span>
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<span class="w-1 h-1 rounded-full bg-outline/20"></span>
+<a class="hover:text-primary transition-colors" href="#">Trust Center</a>
+</div>
+</div>
+</main>
+<footer class="bg-[#0b1326] text-[#c0c1ff] font-['Inter'] text-xs tracking-widest uppercase w-full px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-4 border-t border-[#c0c1ff]/15 mt-auto">
+<div class="text-lg font-bold text-[#c0c1ff]">EYE</div>
+<div class="flex gap-8 flex-wrap justify-center">
+<a class="text-slate-500 hover:text-[#d0bcff] transition-all opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-[#d0bcff] transition-all opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-[#d0bcff] transition-all opacity-80 hover:opacity-100" href="#">Security</a>
+<a class="text-slate-500 hover:text-[#d0bcff] transition-all opacity-80 hover:opacity-100" href="#">Status</a>
+</div>
+<div class="text-slate-500 opacity-60">© 2024 EYE AI. All rights reserved.</div>
+</footer>
+</body></html>

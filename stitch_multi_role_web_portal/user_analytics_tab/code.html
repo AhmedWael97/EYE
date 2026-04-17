@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EYE | Analytics Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Tajawal:wght@200..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#31394d",
+                    "on-primary-fixed": "#07006c",
+                    "error-container": "#93000a",
+                    "surface-tint": "#c0c1ff",
+                    "surface-container-low": "#131b2e",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "surface-container": "#171f33",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "surface": "#0b1326",
+                    "outline": "#908fa0",
+                    "on-surface": "#dae2fd",
+                    "on-secondary-fixed": "#23005c",
+                    "on-secondary": "#3c0091",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "surface-dim": "#0b1326",
+                    "surface-variant": "#2d3449",
+                    "tertiary-container": "#d97721",
+                    "outline-variant": "#464554",
+                    "on-background": "#dae2fd",
+                    "tertiary": "#ffb783",
+                    "surface-container-high": "#222a3d",
+                    "on-primary": "#1000a9",
+                    "primary": "#c0c1ff",
+                    "on-tertiary-container": "#452000",
+                    "inverse-surface": "#dae2fd",
+                    "inverse-on-surface": "#283044",
+                    "background": "#0b1326",
+                    "surface-container-lowest": "#060e20",
+                    "primary-container": "#8083ff",
+                    "secondary": "#d0bcff",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "surface-container-highest": "#2d3449",
+                    "secondary-container": "#571bc1",
+                    "on-secondary-container": "#c4abff",
+                    "on-primary-container": "#0d0096",
+                    "tertiary-fixed-dim": "#ffb783",
+                    "tertiary-fixed": "#ffdcc5",
+                    "on-tertiary": "#4f2500",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "primary-fixed": "#e1e0ff",
+                    "on-error": "#690005",
+                    "secondary-fixed": "#e9ddff",
+                    "on-surface-variant": "#c7c4d7",
+                    "inverse-primary": "#494bd6",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed": "#301400"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(45, 52, 73, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-slate-900 flex flex-col h-screen py-6 z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">visibility</span>
+</div>
+<div>
+<h2 class="text-lg font-bold text-indigo-300 leading-none">The Digital Curator</h2>
+<p class="font-sans uppercase tracking-widest text-[11px] text-slate-500 mt-1">AI Visitor Intelligence</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all font-sans uppercase tracking-widest text-[11px]" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all font-sans uppercase tracking-widest text-[11px]" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="sensors">sensors</span>
+<span>Live View</span>
+</a>
+<!-- Active Navigation: Analytics/Acquisition Intent -->
+<a class="flex items-center gap-3 px-6 py-3 text-indigo-200 font-bold border-r-4 border-indigo-400 bg-indigo-500/10 font-sans uppercase tracking-widest text-[11px]" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="input" style="font-variation-settings: 'FILL' 1;">input</span>
+<span>Acquisition</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all font-sans uppercase tracking-widest text-[11px]" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="psychology">psychology</span>
+<span>Behavior</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all font-sans uppercase tracking-widest text-[11px]" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="group_work">group_work</span>
+<span>Retention</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<div class="bg-surface-container-high p-4 rounded-xl mb-6">
+<p class="text-[10px] font-bold text-primary tracking-widest uppercase mb-2">Power User</p>
+<p class="text-xs text-on-surface-variant mb-4 leading-relaxed">Unlock predictive analytics and user session replays.</p>
+<button class="w-full py-2 bg-gradient-to-r from-primary to-primary-container text-on-primary-container text-xs font-bold rounded-lg active:scale-95 transition-transform">Upgrade to Pro</button>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-3 py-2 text-slate-500 hover:text-slate-300 transition-colors font-sans uppercase tracking-widest text-[11px]" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help">help</span>
+<span>Documentation</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-slate-500 hover:text-slate-300 transition-colors font-sans uppercase tracking-widest text-[11px]" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 bg-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-8 h-16 sticky top-0 z-50 bg-slate-950/60 backdrop-blur-xl shadow-[0px_20px_40px_rgba(7,0,108,0.2)]">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-slate-900/40 px-3 py-1.5 rounded-lg border border-outline-variant/15">
+<span class="material-symbols-outlined text-indigo-300 text-sm">language</span>
+<span class="text-sm font-medium text-on-surface">analytics.eye-ai.io</span>
+<span class="material-symbols-outlined text-slate-500 text-sm">expand_more</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-slate-900/40 rounded-lg p-1 border border-outline-variant/15">
+<div class="flex items-center gap-2 px-3 py-1 text-sm font-medium text-on-surface">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Oct 1 - Oct 31, 2024</span>
+</div>
+<div class="w-[1px] h-4 bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-2 px-3 py-1">
+<span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Compare</span>
+<div class="w-8 h-4 bg-primary/20 rounded-full relative">
+<div class="absolute right-0.5 top-0.5 w-3 h-3 bg-primary rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-indigo-200 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-indigo-200 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 ring-2 ring-primary/20">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="close up professional headshot of a creative director in soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXeev1FFGu0eapEg6k1khFH4-wwm9h-MeD3Db7Sk7HQ1D3A8D1nBanBGOPOMfPg95kIkM5xjMe-gebxslnz56kKs0W8TfTR1xYFjLdVj_51idWyA9pFNrxdRu44YEKyXrVUNfdati3Cnh4zCOxJQ8qryiGBXXDWdvunwytDG6N5EIZCzfE7PMjhvdJLmt_SKUbcv1iSu_fUu9yqZ6Az0UW8omyEZHOqt5izszgiOtBmvfp1PxCZdfraKjGIhoomT9UNZAGLkeKK3nq"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="p-8 space-y-8">
+<!-- KPI Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full -mr-10 -mt-10"></div>
+<p class="label-sm text-slate-500 font-bold uppercase tracking-widest text-[11px] mb-4">Total Visitors</p>
+<div class="flex items-end justify-between">
+<h3 class="text-4xl font-black text-on-surface tracking-tighter">142.8k</h3>
+<div class="bg-primary/10 text-primary px-2 py-1 rounded-md flex items-center gap-1 text-xs font-bold mb-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                                12.5%
+                            </div>
+</div>
+<div class="mt-4 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[75%] rounded-full"></div>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<p class="label-sm text-slate-500 font-bold uppercase tracking-widest text-[11px] mb-4">Bounce Rate</p>
+<div class="flex items-end justify-between">
+<h3 class="text-4xl font-black text-on-surface tracking-tighter">32.4%</h3>
+<div class="bg-tertiary/10 text-tertiary px-2 py-1 rounded-md flex items-center gap-1 text-xs font-bold mb-1">
+<span class="material-symbols-outlined text-xs">trending_down</span>
+                                4.2%
+                            </div>
+</div>
+<div class="mt-4 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[32%] rounded-full"></div>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<p class="label-sm text-slate-500 font-bold uppercase tracking-widest text-[11px] mb-4">Avg. Session Duration</p>
+<div class="flex items-end justify-between">
+<h3 class="text-4xl font-black text-on-surface tracking-tighter">04m 12s</h3>
+<div class="bg-primary/10 text-primary px-2 py-1 rounded-md flex items-center gap-1 text-xs font-bold mb-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                                8.1%
+                            </div>
+</div>
+<div class="mt-4 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[60%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Main Traffic Chart -->
+<div class="bg-surface-container p-8 rounded-xl">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h2 class="text-2xl font-bold text-on-surface tracking-tight">Traffic Trend</h2>
+<p class="text-sm text-slate-500 mt-1">Daily visitor volume and engagement patterns</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-xs font-medium text-on-surface-variant">Current Period</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-outline-variant/40"></div>
+<span class="text-xs font-medium text-on-surface-variant">Previous Period</span>
+</div>
+</div>
+</div>
+<div class="h-80 w-full relative flex items-end gap-1">
+<!-- Simulated Area Chart Content -->
+<div class="absolute inset-0 flex items-end">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 300">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#c0c1ff" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#c0c1ff" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Previous Period Line -->
+<path d="M0,250 Q100,240 200,260 T400,230 T600,250 T800,220 T1000,240" fill="none" stroke="#464554" stroke-dasharray="4" stroke-width="2"></path>
+<!-- Current Period Area -->
+<path d="M0,220 Q100,180 200,200 T400,120 T600,150 T800,80 T1000,110 L1000,300 L0,300 Z" fill="url(#chartGradient)"></path>
+<!-- Current Period Line -->
+<path d="M0,220 Q100,180 200,200 T400,120 T600,150 T800,80 T1000,110" fill="none" stroke="#c0c1ff" stroke-width="3"></path>
+</svg>
+</div>
+<!-- X-Axis Labels -->
+<div class="absolute bottom-[-30px] w-full flex justify-between px-2 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+<span>Oct 01</span>
+<span>Oct 07</span>
+<span>Oct 14</span>
+<span>Oct 21</span>
+<span>Oct 28</span>
+<span>Oct 31</span>
+</div>
+</div>
+</div>
+<!-- Secondary Intelligence Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Traffic Sources -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-sm font-bold uppercase tracking-widest text-indigo-300">Traffic Sources</h3>
+<span class="material-symbols-outlined text-slate-500 text-sm">more_vert</span>
+</div>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs mb-2">
+<span class="text-on-surface">Direct</span>
+<span class="text-slate-400">42,109</span>
+</div>
+<div class="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[45%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-2">
+<span class="text-on-surface">Search</span>
+<span class="text-slate-400">38,552</span>
+</div>
+<div class="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[38%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-2">
+<span class="text-on-surface">Social</span>
+<span class="text-slate-400">29,401</span>
+</div>
+<div class="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[29%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-2">
+<span class="text-on-surface">Referral</span>
+<span class="text-slate-400">12,874</span>
+</div>
+<div class="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant w-[12%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Top Countries -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-sm font-bold uppercase tracking-widest text-indigo-300">Top Countries</h3>
+<button class="text-[10px] font-bold text-primary uppercase tracking-widest">Full List</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="text-xl">🇺🇸</span>
+<span class="text-sm font-medium">United States</span>
+</div>
+<span class="text-sm font-mono text-slate-400">62.4k</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="text-xl">🇬🇧</span>
+<span class="text-sm font-medium">United Kingdom</span>
+</div>
+<span class="text-sm font-mono text-slate-400">18.9k</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="text-xl">🇩🇪</span>
+<span class="text-sm font-medium">Germany</span>
+</div>
+<span class="text-sm font-mono text-slate-400">12.2k</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="text-xl">🇨🇦</span>
+<span class="text-sm font-medium">Canada</span>
+</div>
+<span class="text-sm font-mono text-slate-400">9.1k</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="text-xl">🇫🇷</span>
+<span class="text-sm font-medium">France</span>
+</div>
+<span class="text-sm font-mono text-slate-400">7.5k</span>
+</div>
+</div>
+</div>
+<!-- Devices & OS -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-sm font-bold uppercase tracking-widest text-indigo-300">Devices &amp; OS</h3>
+</div>
+<div class="mb-8">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">smartphone</span>
+<span class="text-xs font-medium">Mobile</span>
+</div>
+<span class="text-xs font-bold">58%</span>
+</div>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">laptop</span>
+<span class="text-xs font-medium">Desktop</span>
+</div>
+<span class="text-xs font-bold">36%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">tablet</span>
+<span class="text-xs font-medium">Tablet</span>
+</div>
+<span class="text-xs font-bold">6%</span>
+</div>
+</div>
+<div class="pt-6 border-t border-outline-variant/15">
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Browser Share</p>
+<div class="flex h-3 w-full rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[65%]" title="Chrome"></div>
+<div class="h-full bg-secondary w-[20%]" title="Safari"></div>
+<div class="h-full bg-tertiary w-[10%]" title="Firefox"></div>
+<div class="h-full bg-slate-700 w-[5%]" title="Others"></div>
+</div>
+<div class="mt-4 grid grid-cols-2 gap-2">
+<div class="flex items-center gap-2 text-[10px] font-medium text-slate-400">
+<div class="w-2 h-2 rounded-full bg-primary"></div> Chrome
+                                </div>
+<div class="flex items-center gap-2 text-[10px] font-medium text-slate-400">
+<div class="w-2 h-2 rounded-full bg-secondary"></div> Safari
+                                </div>
+<div class="flex items-center gap-2 text-[10px] font-medium text-slate-400">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div> Firefox
+                                </div>
+<div class="flex items-center gap-2 text-[10px] font-medium text-slate-400">
+<div class="w-2 h-2 rounded-full bg-slate-700"></div> Others
+                                </div>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Insight Chip (Contextual Highlight) -->
+<div class="bg-secondary-container/20 border border-secondary/20 p-4 rounded-xl flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-secondary-container">AI Intelligence Insight</p>
+<p class="text-xs text-secondary/80">Anomaly detected: Mobile traffic from "United Kingdom" increased by 42% in the last 48 hours. Recommend reviewing campaign source tags.</p>
+</div>
+<button class="ml-auto bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-lg">View Details</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>
