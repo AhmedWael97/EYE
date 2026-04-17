@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS sessions
     pageviews    UInt16,
     duration     UInt32,
     bounced      UInt8,                    -- 1 = single pageview
+    company_name Nullable(String),         -- enriched from IP/domain via EnrichCompanyJob
     started_at   DateTime('UTC'),
     ended_at     DateTime('UTC')
 )

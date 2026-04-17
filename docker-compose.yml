@@ -47,6 +47,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+    dns_opt:
+      - ndots:0
     networks:
       - eye_net
 
@@ -81,6 +83,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-eye} -d ${DB_DATABASE:-eye}"]
       interval: 10s
@@ -147,6 +151,8 @@ services:
     depends_on:
       php-fpm:
         condition: service_healthy
+    dns_opt:
+      - ndots:0
     networks:
       - eye_net
 
@@ -166,6 +172,8 @@ services:
     depends_on:
       php-fpm:
         condition: service_healthy
+    dns_opt:
+      - ndots:0
     networks:
       - eye_net
 
@@ -187,6 +195,8 @@ services:
     depends_on:
       php-fpm:
         condition: service_healthy
+    dns_opt:
+      - ndots:0
     networks:
       - eye_net
 
