@@ -1,10 +1,10 @@
 .PHONY: help build up down restart logs shell-php shell-node \
         migrate migrate-fresh seed test test-backend test-frontend test-e2e \
-        deploy-staging deploy-prod horizon tinker
+        deploy-staging deploy-prod horizon tinker prod-up prod-down prod-build
 
 # ─── Variables ───────────────────────────────────────────────────────────────
 COMPOSE      = docker compose
-COMPOSE_PROD = docker compose -f docker-compose.yml -f docker-compose.prod.yml
+COMPOSE_PROD = docker compose -f docker-compose.prod.yml
 PHP          = $(COMPOSE) exec php-fpm php
 ARTISAN      = $(PHP) artisan
 NPM          = $(COMPOSE) exec node npm
@@ -14,17 +14,17 @@ help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
 
-# ─── Docker lifecycle ─────────────────────────────────────────────────────────
-build: ## Build all Docker images
+# ─── Docker lifecycle (Development) ──────────────────────────────────────────
+build: ## Build all Docker images (dev)
 	$(COMPOSE) build --no-cache
 
-up: ## Start all services
+up: ## Start all services (dev — hot-reload enabled)
 	$(COMPOSE) up -d
 
-down: ## Stop all services
+down: ## Stop all services (dev)
 	$(COMPOSE) down
 
-restart: ## Restart all services
+restart: ## Restart all services (dev)
 	$(COMPOSE) restart
 
 logs: ## Tail logs from all services
@@ -33,8 +33,24 @@ logs: ## Tail logs from all services
 logs-php: ## Tail PHP-FPM logs
 	$(COMPOSE) logs -f php-fpm
 
+logs-node: ## Tail Next.js logs
+	$(COMPOSE) logs -f node
+
 logs-queue: ## Tail queue worker logs
-	$(COMPOSE) logs -f laravel-queue
+	$(COMPOSE) logs -f laravel-horizon
+
+# ─── Docker lifecycle (Production) ───────────────────────────────────────────
+prod-build: ## Build all Docker images (production)
+	$(COMPOSE_PROD) build --no-cache
+
+prod-up: ## Start all services (production)
+	$(COMPOSE_PROD) up -d
+
+prod-down: ## Stop all services (production)
+	$(COMPOSE_PROD) down
+
+prod-logs: ## Tail logs (production)
+	$(COMPOSE_PROD) logs -f
 
 # ─── Shell access ────────────────────────────────────────────────────────────
 shell-php: ## Open a shell in the PHP-FPM container

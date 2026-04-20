@@ -9,6 +9,7 @@ RUN apk add --no-cache \
     libwebp-dev \
     libxml2-dev \
     zip \
+    libzip-dev \
     unzip \
     oniguruma-dev \
     icu-dev \
@@ -29,7 +30,8 @@ RUN docker-php-ext-configure gd --with-jpeg --with-webp \
         gd \
         intl \
         opcache \
-        sockets
+        sockets \
+        zip
 
 # Install Redis extension via PECL
 RUN pecl install redis && docker-php-ext-enable redis

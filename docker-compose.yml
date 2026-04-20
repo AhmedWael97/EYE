@@ -1,4 +1,14 @@
-version: "3.9"
+# ═══════════════════════════════════════════════════════════════════════════════
+# EYE Analytics — Development Docker Compose (Hot-Reload Enabled)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Usage: docker compose up -d
+#
+# App:      http://localhost:8000  (Nginx → Frontend + Backend + WS)
+# Reverb:   ws://localhost:8080   (WebSockets direct)
+#
+# NOTE: Always access the app via port 8000 (Nginx). Port 3000 is internal
+#       and may not work on Docker Desktop for Windows due to WSL2 relay.
+# ═══════════════════════════════════════════════════════════════════════════════
 
 services:
   # ─── Nginx Reverse Proxy ──────────────────────────────────────────────────
@@ -17,10 +27,13 @@ services:
         condition: service_healthy
       node:
         condition: service_started
+      tracker-build:
+        condition: service_completed_successfully
     networks:
       - eye_net
 
   # ─── PHP-FPM (Laravel) ───────────────────────────────────────────────────
+  # DEV: mounts source + dev php.ini (opcache.validate_timestamps=1)
   php-fpm:
     build:
       context: ./docker/php
@@ -30,8 +43,17 @@ services:
     working_dir: /var/www/backend
     volumes:
       - ./backend:/var/www/backend
+      - ./docker/php/php-dev.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     environment:
-      - APP_ENV=${APP_ENV:-local}
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=postgresql
+      - DB_DATABASE=${DB_DATABASE:-eye}
+      - DB_USERNAME=${DB_USERNAME:-eye}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - REDIS_HOST=redis
+      - CLICKHOUSE_HOST=clickhouse
+      - REVERB_HOST=laravel-reverb
     env_file:
       - ./backend/.env
     depends_on:
@@ -52,19 +74,23 @@ services:
     networks:
       - eye_net
 
-  # ─── Next.js Frontend ────────────────────────────────────────────────────
+  # ─── Next.js Frontend (Dev Server with HMR) ──────────────────────────────
+  # DEV: mounts source + runs `next dev` for instant hot-reload
   node:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: node:20-alpine
     container_name: eye_node
     restart: unless-stopped
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- -H 0.0.0.0"
     ports:
       - "3000:3000"
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
+      - frontend_node_modules:/app/node_modules
+      - frontend_next:/app/.next
+    environment:
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
     env_file:
       - ./frontend/.env.local
     depends_on:
@@ -102,9 +128,6 @@ services:
       - ch_data:/var/lib/clickhouse
       - ./docker/clickhouse/config.xml:/etc/clickhouse-server/config.d/custom.xml:ro
       - ./docker/clickhouse/users.xml:/etc/clickhouse-server/users.d/custom.xml:ro
-    ports:
-      - "8123:8123"   # HTTP interface (internal only — Nginx does not expose this)
-      - "9000:9000"   # Native TCP (internal only)
     ulimits:
       nofile:
         soft: 262144
@@ -135,27 +158,6 @@ services:
     networks:
       - eye_net
 
-  # ─── Laravel Queue Worker ─────────────────────────────────────────────────
-  laravel-queue:
-    build:
-      context: ./docker/php
-      dockerfile: Dockerfile
-    container_name: eye_queue
-    restart: unless-stopped
-    working_dir: /var/www/backend
-    command: php artisan queue:work --queue=tracking,ai,exports,notifications,default --sleep=3 --tries=3 --max-time=3600
-    volumes:
-      - ./backend:/var/www/backend
-    env_file:
-      - ./backend/.env
-    depends_on:
-      php-fpm:
-        condition: service_healthy
-    dns_opt:
-      - ndots:0
-    networks:
-      - eye_net
-
   # ─── Laravel Horizon (queue dashboard) ───────────────────────────────────
   laravel-horizon:
     build:
@@ -167,6 +169,43 @@ services:
     command: php artisan horizon
     volumes:
       - ./backend:/var/www/backend
+      - ./docker/php/php-dev.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - DB_HOST=postgresql
+      - DB_DATABASE=${DB_DATABASE:-eye}
+      - DB_USERNAME=${DB_USERNAME:-eye}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - REDIS_HOST=redis
+      - CLICKHOUSE_HOST=clickhouse
+    env_file:
+      - ./backend/.env
+    depends_on:
+      php-fpm:
+        condition: service_healthy
+    dns_opt:
+      - ndots:0
+    networks:
+      - eye_net
+
+  # ─── Laravel Scheduler ───────────────────────────────────────────────────
+  laravel-scheduler:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: eye_scheduler
+    restart: unless-stopped
+    working_dir: /var/www/backend
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    volumes:
+      - ./backend:/var/www/backend
+      - ./docker/php/php-dev.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - DB_HOST=postgresql
+      - DB_DATABASE=${DB_DATABASE:-eye}
+      - DB_USERNAME=${DB_USERNAME:-eye}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - REDIS_HOST=redis
+      - CLICKHOUSE_HOST=clickhouse
     env_file:
       - ./backend/.env
     depends_on:
@@ -190,13 +229,37 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/var/www/backend
+      - ./docker/php/php-dev.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - DB_HOST=postgresql
+      - DB_DATABASE=${DB_DATABASE:-eye}
+      - DB_USERNAME=${DB_USERNAME:-eye}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - REDIS_HOST=redis
+      - CLICKHOUSE_HOST=clickhouse
     env_file:
       - ./backend/.env
     depends_on:
       php-fpm:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     dns_opt:
       - ndots:0
+    networks:
+      - eye_net
+
+  # ─── Tracker JS Build (populates tracker_dist volume) ────────────────────
+  tracker-build:
+    image: node:20-alpine
+    container_name: eye_tracker_build
+    working_dir: /tracker
+    volumes:
+      - ./tracker:/tracker
+      - ./backend:/backend
+      - tracker_dist:/var/www/tracker
+    command: sh -c "npm ci --prefer-offline && node build.js && cp dist/eye.min.js /var/www/tracker/eye.js"
+    restart: "no"
     networks:
       - eye_net
 
@@ -206,6 +269,8 @@ volumes:
   ch_data:
   redis_data:
   tracker_dist:
+  frontend_node_modules:
+  frontend_next:
 
 # ─── Network ────────────────────────────────────────────────────────────────
 networks:
