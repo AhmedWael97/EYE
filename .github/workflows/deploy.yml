@@ -204,55 +204,63 @@ jobs:
 
             echo "==> Pulling latest code..."
             git pull origin main
+            # Pull each submodule on its own default branch
+            git -C backend pull origin main  || true
+            git -C frontend pull origin master || true
+            git -C tracker  pull origin main  || true
 
-            # ── Backend changed ───────────────────────────────────────────
+            # ── Always: composer install (new packages may arrive with any pull) ──
+            echo "==> [BACKEND] composer install..."
+            docker compose exec -T php-fpm composer install \
+              --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
+
+            # ── Backend changed: migrate + recache ───────────────────────
             if [ "$BACKEND_CHANGED" = "true" ]; then
-              echo "==> [BACKEND] Installing Composer dependencies..."
-              docker compose exec -T php-fpm composer install \
-                --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
-
               echo "==> [BACKEND] Running migrations..."
               docker compose exec -T php-fpm php artisan migrate --force
-
-              echo "==> [BACKEND] Clearing & recaching config..."
-              docker compose exec -T php-fpm php artisan config:clear
-              docker compose exec -T php-fpm php artisan config:cache
-              docker compose exec -T php-fpm php artisan route:cache
-              docker compose exec -T php-fpm php artisan view:cache
-
-              echo "==> [BACKEND] Restarting Horizon & Queue..."
-              docker compose exec -T php-fpm php artisan horizon:terminate
-              docker compose restart laravel-queue
-            else
-              echo "==> [BACKEND] No changes — skipping."
+              echo "==> [BACKEND] Restarting Horizon & Queue workers..."
+              docker compose exec -T php-fpm php artisan horizon:terminate || true
+              docker compose restart laravel-horizon laravel-queue laravel-reverb
             fi
 
-            # ── Frontend changed ──────────────────────────────────────────
+            # ── Always: refresh config + route caches ────────────────────
+            echo "==> [BACKEND] Recaching config & routes..."
+            docker compose exec -T php-fpm php artisan config:clear
+            docker compose exec -T php-fpm php artisan config:cache
+            docker compose exec -T php-fpm php artisan route:clear
+            docker compose exec -T php-fpm php artisan route:cache
+            docker compose exec -T php-fpm php artisan view:clear
+
+            # ── Frontend changed: rebuild Next.js image ───────────────────
             if [ "$FRONTEND_CHANGED" = "true" ]; then
-              echo "==> [FRONTEND] Installing npm dependencies..."
-              docker compose exec -T node npm install
-
-              echo "==> [FRONTEND] Building Next.js..."
-              docker compose exec -T node npm run build
-
-              echo "==> [FRONTEND] Restarting node container..."
-              docker compose restart node
-            else
-              echo "==> [FRONTEND] No changes — skipping."
+              echo "==> [FRONTEND] Rebuilding Next.js container..."
+              # Read env vars from the server-local .env.local (not committed)
+              set -a; source frontend/.env.local; set +a
+              docker compose up -d --build node
             fi
 
             # ── Tracker changed ───────────────────────────────────────────
             if [ "$TRACKER_CHANGED" = "true" ]; then
               echo "==> [TRACKER] Rebuilding tracker bundle..."
-              docker compose up tracker-build --no-deps
-            else
-              echo "==> [TRACKER] No changes — skipping."
+              docker compose up -d tracker-build --no-deps
+            fi
+
+            # ── Always: restart nginx so container IPs are re-resolved ────
+            echo "==> Restarting nginx..."
+            docker compose restart nginx
+
+            # ── Regenerate SSL nginx config if certs exist ────────────────
+            DOMAIN=$(grep '^APP_URL=' backend/.env | sed 's|APP_URL=https\?://||' | tr -d '"' | sed 's|/.*||' || true)
+            if [ -n "$DOMAIN" ] && [ -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
+              echo "==> [SSL] Restoring HTTPS nginx config for $DOMAIN..."
+              sed "s/DOMAIN/$DOMAIN/g" docker/nginx/default.conf.ssl > docker/nginx/default.conf
+              docker compose restart nginx
             fi
 
             # ── Final health check ────────────────────────────────────────
             echo "==> Health check..."
             sleep 5
-            curl -sf http://localhost/api/health || echo "WARNING: Health check failed"
+            curl -sf http://localhost/api/health && echo "Health: OK" || echo "WARNING: health check failed"
 
             docker image prune -f
             echo "==> Deployment complete!"
