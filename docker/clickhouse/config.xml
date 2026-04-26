@@ -19,15 +19,18 @@
     <path>/var/lib/clickhouse/</path>
     <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
 
-    <!-- Mark dropped data as merged to avoid fragmentation -->
-    <mark_cache_size>5368709120</mark_cache_size>
+    <!-- Mark cache — kept small for low-RAM servers (128 MB) -->
+    <mark_cache_size>134217728</mark_cache_size>
 
     <!-- Max connections -->
-    <max_connections>200</max_connections>
+    <max_connections>100</max_connections>
     <keep_alive_timeout>10</keep_alive_timeout>
 
-    <!-- Memory limits -->
-    <max_server_memory_usage_to_ram_ratio>0.9</max_server_memory_usage_to_ram_ratio>
+    <!-- Memory limits — cap ClickHouse at 30% of RAM (~600 MB on a 2 GB server) -->
+    <max_server_memory_usage_to_ram_ratio>0.3</max_server_memory_usage_to_ram_ratio>
+
+    <!-- Limit concurrent queries -->
+    <max_concurrent_queries>20</max_concurrent_queries>
 
     <!-- Timezone -->
     <timezone>UTC</timezone>

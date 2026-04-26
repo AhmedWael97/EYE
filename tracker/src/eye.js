@@ -129,6 +129,29 @@
     return s;
   }
 
+  function targetMeta(el) {
+    if (!el || typeof el.tagName !== 'string') return {};
+    var text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    var classes = (typeof el.className === 'string' ? el.className : '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    return {
+      el: selectorOf(el),
+      tg: (el.tagName || '').toLowerCase(),
+      id: (el.id || '').slice(0, 80),
+      cl: classes,
+      tx: text,
+      ar: (el.getAttribute && (el.getAttribute('aria-label') || '') || '').slice(0, 80),
+      rl: (el.getAttribute && (el.getAttribute('role') || '') || '').slice(0, 40),
+      hr: (el.getAttribute && (el.getAttribute('href') || '') || '').slice(0, 200),
+      nm: (el.getAttribute && (el.getAttribute('name') || '') || '').slice(0, 80),
+      tp: (el.getAttribute && (el.getAttribute('type') || '') || '').slice(0, 40),
+    };
+  }
+
+  function resolveClickableTarget(el) {
+    if (!el || !el.closest) return el;
+    return el.closest('button,a,[role="button"],input[type="button"],input[type="submit"],[data-eye-track],[onclick]') || el;
+  }
+
   // ── Pipeline step matching ────────────────────────────────────────────────
   function matchPipelines() {
     var url = d.location ? d.location.href : '';
@@ -187,6 +210,7 @@
     var clickBuf = [];
     d.addEventListener('click', function (ev) {
       var x = ev.clientX, y = ev.clientY, now = Date.now();
+      var primaryTarget = resolveClickableTarget(ev.target);
       clickBuf = clickBuf.filter(function (c) { return now - c.t < 600; });
       clickBuf.push({ x: x, y: y, t: now });
       var nearby = clickBuf.filter(function (c) {
@@ -194,12 +218,19 @@
         return Math.sqrt(dx * dx + dy * dy) <= 30;
       });
       if (nearby.length >= 3) {
-        enqueue('rage_click', { x: Math.round(x), y: Math.round(y), el: selectorOf(ev.target) });
+        var rageMeta = targetMeta(primaryTarget);
+        rageMeta.x = Math.round(x);
+        rageMeta.y = Math.round(y);
+        enqueue('rage_click', rageMeta);
         clickBuf = [];
       }
       if (ev.target && ev.target.closest) {
         var tracked = ev.target.closest('[data-eye-track]');
-        if (tracked) enqueue('click', { el: selectorOf(tracked), label: tracked.getAttribute('data-eye-track') || '' });
+        if (tracked) {
+          var trackedMeta = targetMeta(tracked);
+          trackedMeta.label = tracked.getAttribute('data-eye-track') || '';
+          enqueue('click', trackedMeta);
+        }
       }
       // Dead click — no DOM mutation within 300ms
       if (w.MutationObserver && d.documentElement) {
@@ -208,7 +239,12 @@
         obs.observe(d.documentElement, { childList: true, subtree: true, attributes: true });
         setTimeout(function () {
           obs.disconnect();
-          if (!changed) enqueue('dead_click', { x: Math.round(x), y: Math.round(y), el: selectorOf(ev.target) });
+          if (!changed) {
+            var deadMeta = targetMeta(primaryTarget);
+            deadMeta.x = Math.round(x);
+            deadMeta.y = Math.round(y);
+            enqueue('dead_click', deadMeta);
+          }
         }, 300);
       }
       matchPipelines();
@@ -234,7 +270,11 @@
       if (!href || href[0] === '#' || href.indexOf('javascript:') === 0) return;
       try {
         fetch(href, { method: 'HEAD', mode: 'no-cors' }).then(function (r) {
-          if (r.status === 404) enqueue('broken_link', { url: href, el: selectorOf(a) });
+          if (r.status === 404) {
+            var linkMeta = targetMeta(a);
+            linkMeta.url = href;
+            enqueue('broken_link', linkMeta);
+          }
         }).catch(function () {});
       } catch (_) {}
     }, true);

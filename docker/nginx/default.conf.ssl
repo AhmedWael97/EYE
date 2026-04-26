@@ -167,6 +167,10 @@ server {
         fastcgi_pass php_fpm;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param HTTP_X_REAL_IP $remote_addr;
+        fastcgi_param HTTP_X_FORWARDED_FOR $proxy_add_x_forwarded_for;
+        fastcgi_param HTTP_X_FORWARDED_PROTO $scheme;
+        fastcgi_param HTTP_CF_CONNECTING_IP $http_cf_connecting_ip;
         include fastcgi_params;
         fastcgi_read_timeout 60s;
         fastcgi_buffers 16 16k;
