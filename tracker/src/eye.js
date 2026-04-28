@@ -103,6 +103,9 @@
   var lastUrl = d.location ? d.location.href : '';
   var utm = {};
   var scrollFired = {};
+  var scrollLastY = 0;
+  var scrollLastDir = '';
+  var scrollDirTimes = [];
 
   function parseUtm() {
     try {
@@ -167,13 +170,14 @@
 
   // ── Full init (deferred) ──────────────────────────────────────────────────
   function init() {
-    initIds();
-    parseUtm();
+    initIds();    w._eyeVid = vid;
+    w._eyeSid = sid;    parseUtm();
     doPageview();
 
-    // Scroll depth
+    // Scroll depth + excessive scroll detection
     w.addEventListener('scroll', function () {
-      var scrolled = w.scrollY + w.innerHeight;
+      var nowY = w.scrollY;
+      var scrolled = nowY + w.innerHeight;
       var total = (d.documentElement && d.documentElement.scrollHeight) || 1;
       var pct = Math.round(scrolled / total * 100);
       var marks = [25, 50, 75, 100];
@@ -183,6 +187,19 @@
           enqueue('scroll_depth', { depth: marks[i] });
         }
       }
+      // Excessive scroll: 3+ direction reversals within 2 seconds
+      var dir = nowY > scrollLastY ? 'd' : 'u';
+      if (scrollLastDir && dir !== scrollLastDir) {
+        var now = Date.now();
+        scrollDirTimes = scrollDirTimes.filter(function (t) { return now - t < 2000; });
+        scrollDirTimes.push(now);
+        if (scrollDirTimes.length >= 3) {
+          enqueue('excessive_scroll', { changes: scrollDirTimes.length, y: Math.round(nowY) });
+          scrollDirTimes = [];
+        }
+      }
+      scrollLastDir = dir;
+      scrollLastY = nowY;
     }, { passive: true });
 
     // Time on page / visibility
@@ -229,6 +246,8 @@
         if (tracked) {
           var trackedMeta = targetMeta(tracked);
           trackedMeta.label = tracked.getAttribute('data-eye-track') || '';
+          trackedMeta.x = Math.round(x);
+          trackedMeta.y = Math.round(y);
           enqueue('click', trackedMeta);
         }
       }
@@ -306,12 +325,19 @@
     }
 
     // SPA route changes
-    var onRoute = function () {
+    var onRoute = function (isBack) {
       var cur = d.location ? d.location.href : '';
       if (cur !== lastUrl) {
-        enqueue('time_on_page', { d: Math.round((Date.now() - pageAt) / 1000) });
+        var spent = Math.round((Date.now() - pageAt) / 1000);
+        enqueue('time_on_page', { d: spent });
+        // Quick back: user navigated back within 5 seconds of arriving
+        if (isBack && spent < 5) {
+          enqueue('quick_back', { from: lastUrl, ms: spent * 1000 });
+          flush();
+        }
         lastUrl = cur; pageAt = Date.now(); utm = {}; scrollFired = {};
         sid = uuid(); store('_eye_sid', sid); store('_eye_sid_ts', String(Date.now()));
+        w._eyeSid = sid;
         parseUtm();
         doPageview();
       }
@@ -319,11 +345,11 @@
     if (w.history) {
       ['pushState', 'replaceState'].forEach(function (m) {
         var orig = w.history[m];
-        if (orig) w.history[m] = function () { var r = orig.apply(this, arguments); onRoute(); return r; };
+        if (orig) w.history[m] = function () { var r = orig.apply(this, arguments); onRoute(false); return r; };
       });
     }
-    w.addEventListener('popstate', onRoute);
-    w.addEventListener('hashchange', onRoute);
+    w.addEventListener('popstate', function () { onRoute(true); });
+    w.addEventListener('hashchange', function () { onRoute(false); });
 
     startFlushTimer();
   }
