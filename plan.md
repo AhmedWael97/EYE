@@ -940,6 +940,106 @@ Critical user flows tested against the running Docker stack:
 - [ ] Visit `/dashboard/companies` on a Free plan → confirm 403 / upgrade gate is displayed
 - [ ] View a visitor row in the session list → confirm company name badge appears when enrichment has resolved
 
+---
+
+## Changelog — Recent Updates (reference)
+
+### CORS + Routing fix (May 2025)
+- **Problem:** `POST /api/collect/replay` returned 404 from `abubijad.com` domain — CORS preflight was passing but the actual POST was routing to a 404. Root cause: stale `bootstrap/cache/routes-v7.php` from before `collect/*` routes were added to `api.php`. The cache was serving old routing tables even though `route:list` appeared to show routes.
+- **Fix:** `docker exec eye_php_fpm php /var/www/backend/artisan route:clear` then `route:cache`. No code changes needed.
+- **Nginx config (docker/nginx/default.conf):** unified CORS block on all `location` stanzas, URI map `/api/collect/* → /api/v1/collect/*`, explicit FastCGI params `REQUEST_URI $eye_effective_uri` and `SCRIPT_NAME /index.php`.
+- **cors.php:** `allowed_origins => ['*']`, `supports_credentials => true`.
+- **ApiKeyAuth middleware:** bypass pattern `#^api/(v1/)?(track|collect)(/|$)#` — tracker/collect endpoints skip API key validation.
+- **Verified:** `OPTIONS` → 204 with `Access-Control-Allow-Origin: *`, `POST` → 400 (route found, empty payload rejected correctly).
+
+### Visitors page fix
+- Fixed `sessions_count` typo in `/dashboard/visitors/page.tsx` → changed `v.sessions_count || 1` to `v.session_count ?? 0` to correctly read the ClickHouse field name.
+
+### New feature: Campaigns Analytics page (`/dashboard/campaigns`)
+- **Backend:** `backend/app/Http/Controllers/Analytics/CampaignsController.php`
+  - Route: `GET /api/v1/analytics/{domainId}/campaigns?start=&end=&goal=`
+  - Queries ClickHouse `sessions` table, groups by `utm_source / utm_medium / utm_campaign`
+  - Returns: `campaigns[]` (source/medium/campaign/sessions/visitors/avg_duration/avg_pages/bounce_rate/conversions), `top_sources[]`, `trend[]` (daily sessions per top-5 sources)
+  - Optional `goal` param: URL substring for conversion tracking
+- **Frontend:** `frontend/src/app/[locale]/(app)/dashboard/campaigns/page.tsx`
+  - Period selector (7/30/90 days), goal URL input filter
+  - KPI cards: total sessions, unique visitors, campaigns, avg bounce rate
+  - Sessions by source bar chart
+  - Session trend by source line chart (top 5 sources, multi-line)
+  - Sortable campaigns table with all UTM fields + conversions
+
+### New feature: Engaged Visitors page (`/dashboard/engaged-visitors`)
+- **Backend:** `backend/app/Http/Controllers/Analytics/EngagedVisitorsController.php`
+  - Route: `GET /api/v1/analytics/{domainId}/engaged-visitors?start=&end=&page=`
+  - Engagement score formula (0–100):
+    ```
+    score = min(100,
+      clamp(avg_duration/120, 0, 30)   // time on site (max 30 pts)
+    + clamp(avg_pages*10, 0, 30)        // pages browsed (max 30 pts)
+    + clamp(clicks*2, 0, 20)            // click interactions (max 20 pts)
+    + clamp(sessions*5, 0, 15)          // return visits (max 15 pts)
+    + clamp(scroll/20, 0, 5)            // scroll depth (max 5 pts)
+    )
+    ```
+  - Queries `sessions` JOIN `events` (clicks) JOIN scroll_depth `ux_events`
+  - Returns paginated list sorted by score DESC; total_ranked count
+- **Frontend:** `frontend/src/app/[locale]/(app)/dashboard/engaged-visitors/page.tsx`
+  - Period selector, min-score slider filter
+  - KPI cards: total ranked, top score, avg return visits
+  - Score legend: green ≥60 / yellow 30–59 / red <30
+  - Table: score badge + bar, visitor ID, sessions, avg duration, avg pages, clicks, scroll depth, country, last seen
+  - Pagination
+
+### New feature: Full Summary page (`/dashboard/summary`)
+- **Backend:** `backend/app/Http/Controllers/Analytics/SummaryController.php`
+  - Route: `GET /api/v1/analytics/{domainId}/summary?period=7d|30d|90d`
+  - Aggregates ALL major KPIs in a single response:
+    - `traffic` + `prev_traffic` (for period-over-period % deltas): visitors, sessions, pageviews, avg_duration, bounce_rate, avg_pages
+    - `top_pages[5]`, `top_countries[5]`, `top_referrers[5]`
+    - `devices[]` (device_type + sessions for pie chart)
+    - `top_campaigns[5]` (source/campaign/sessions/visitors/avg_duration)
+    - `engaged_count` (visitors with score ≥ 50)
+    - `ux_score` (from PostgreSQL `ux_scores` table — score, breakdown, calculated_at)
+    - `custom_events[5]` (top by occurrences)
+    - `trend[]` (daily visitors + sessions for area chart)
+  - Uses `parsePeriodDates()` and `prevPeriod()` private helpers
+- **Frontend:** `frontend/src/app/[locale]/(app)/dashboard/summary/page.tsx`
+  - "Everything in one view" consolidated dashboard
+  - Period selector (7/30/90 days)
+  - Section 1 — Traffic Overview: 6 KPI cards with period-over-period delta arrows
+  - Section 2 — Visitors & Sessions area chart (dual series)
+  - Section 3 — Content & Audience: top pages / top countries / top referrers (3 columns)
+  - Section 4 — Channels & Engagement: device pie chart / top campaigns / engagement snapshot (3 columns)
+  - Section 5 — Website Health: UX score ring gauge + top custom events bar chart
+  - `UxScoreGauge` SVG ring component, color-coded by score (green/yellow/red)
+  - `Delta` component: period-over-period % change with up/down arrow
+
+### Sidebar navigation updates
+- Added to `frontend/src/components/AppSidebar.tsx`:
+  - **Full Summary** (`Star` icon) in top group (alongside Dashboard & Realtime)
+  - **Campaigns** (`Megaphone` icon) in Analytics group
+  - **Engaged Visitors** (`Flame` icon) in Analytics group
+- Added translation keys in `frontend/messages/en.json` and `ar.json`:
+  - `summary`, `campaigns`, `engagedVisitors`
+
+### API route registrations (backend/routes/api.php)
+New routes added inside `analyticsVisitors` prefix group:
+```php
+Route::get('campaigns', CampaignsController::class)->name('campaigns');
+Route::get('engaged-visitors', EngagedVisitorsController::class)->name('engaged-visitors');
+Route::get('summary', SummaryController::class)->name('summary');
+```
+
+### Frontend API client updates
+- `frontend/src/api/routes.ts` — added `campaigns`, `engagedVisitors`, `summary` route constants
+- `frontend/src/api/analytics.ts` — added `campaigns()`, `engagedVisitors()`, `summary()` API methods
+
+### Deployment notes
+- Server: VPS `root@147.182.189.120`, app at `/opt/eye`
+- After deploying PHP files: `docker exec eye_php_fpm php /var/www/backend/artisan route:clear && route:cache`
+- Frontend requires full Docker rebuild: `docker compose -f docker-compose.prod.yml build --no-cache node`
+- ClickHouse tables used: `sessions`, `events`, `custom_events`, `ux_events`, `replay_events`
+
 **Session Replay (Phase 2 stub checks)**
 - [ ] Confirm `eye-replay.min.js` is NOT loaded or requested in Phase 1 (check DevTools Network panel)
 - [ ] Call `GET /api/replay/{domainId}/sessions` → confirm 503 `{"feature":"disabled","phase":2}` response

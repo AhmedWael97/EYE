@@ -264,7 +264,7 @@ services:
       - ./tracker:/tracker
       - ./backend:/backend
       - tracker_dist:/var/www/tracker
-    command: sh -c "npm ci --prefer-offline && node build.js && cp dist/eye.min.js /var/www/tracker/eye.js"
+    command: sh -c "npm ci --prefer-offline && node build.js && cp /backend/public/tracker/eye.js /var/www/tracker/eye.js && cp /backend/public/tracker/eye-replay.js /var/www/tracker/eye-replay.js"
     restart: "no"
     networks:
       - eye_net
