@@ -77,7 +77,7 @@ eye/
   - `company_name` denormalized back to ClickHouse `sessions.company_name` via async ALTER UPDATE mutation once enrichment resolves
   - Active only when `IPINFO_TOKEN` env var is configured and the domain owner's plan includes the B2B intelligence feature
 
-**Session Replay (Phase 2 — schema only, feature disabled in Phase 1)**
+**Session Replay (Session Replay)**
 - session_replays: id, domain_id, session_id, visitor_id, start_url, duration_seconds, event_count, size_bytes, status(recording|complete|pruned), recorded_at
   - Created when `domains.settings.replay_enabled = true` and user plan includes replay
   - Pruned by `CleanupExpiredEventsCommand` per plan `data_retention_days`; cascade-deleted on GDPR visitor deletion request

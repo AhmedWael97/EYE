@@ -71,24 +71,29 @@ import { record } from 'rrweb';
     record({
       emit: function (event) {
         buf.push(event);
-        // Flush immediately after a full DOM snapshot to avoid losing the
-        // baseline state if the user closes the tab quickly.
-        if (event.type === 2 /* FullSnapshot */ || buf.length >= 50) {
+        buf.push(event);
+
+        // FORCE FLUSH on snapshot: 
+        // If it's a FullSnapshot (2) or Meta (4), we want to send it 
+        // immediately so the player has the "base" layer.
+        if (event.type === 2 || event.type === 4) {
+          flush();
+        } else if (buf.length >= 50) {
           flush();
         }
       },
-      // Take a periodic full snapshot every 30 s so we can seek mid-session.
-      checkoutEveryNms: 30000,
-      // Privacy: mask all input values by default.
+      checkoutEveryNms: 10000,        // CRITICAL FIX: 10s instead of 30s for frequent FullSnapshot
       maskAllInputs:    true,
-      // Inline stylesheets so the replay looks identical to the original.
       inlineStylesheet: true,
-      // Add class "eye-block" to an element to exclude it from recordings.
       blockClass:       'eye-block',
-      // Add class "eye-mask" to replace text with asterisks in recordings.
       maskTextClass:    'eye-mask',
-      // Don't record cross-origin iframes (CSP / privacy).
-      recordCrossOriginIframes: false,
+      
+      // CHANGE THESE TWO:
+      recordCanvas: true,             // Capture charts/maps
+      recordCrossOriginIframes: true, // Capture external widgets
+      
+      // ADD THIS:
+      collectFonts: true
     });
   }
 
