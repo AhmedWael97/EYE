@@ -48,20 +48,30 @@ import { record } from 'rrweb';
       sid:    getSid(),
       events: batch,
     });
+
+    function sendViaXhr(body) {
+      var x = new XMLHttpRequest();
+      x.open('POST', API + '/replay', true);
+      x.setRequestHeader('Content-Type', 'application/json');
+      x.send(body);
+    }
+
     try {
       if (w.fetch) {
+        // keepalive requests are size-limited in browsers (~64KB);
+        // large FullSnapshot payloads can be dropped if keepalive is forced.
+        var useKeepalive = payload.length < 60000;
         fetch(API + '/replay', {
           method:      'POST',
           headers:     { 'Content-Type': 'application/json' },
           body:        payload,
-          keepalive:   true,
+          keepalive:   useKeepalive,
           credentials: 'omit',
-        }).catch(function () {});
+        }).catch(function () {
+          try { sendViaXhr(payload); } catch (_) {}
+        });
       } else {
-        var x = new XMLHttpRequest();
-        x.open('POST', API + '/replay', true);
-        x.setRequestHeader('Content-Type', 'application/json');
-        x.send(payload);
+        sendViaXhr(payload);
       }
     } catch (_) {}
   }
@@ -70,7 +80,6 @@ import { record } from 'rrweb';
   function startRecording() {
     record({
       emit: function (event) {
-        buf.push(event);
         buf.push(event);
 
         // FORCE FLUSH on snapshot: 
@@ -87,18 +96,16 @@ import { record } from 'rrweb';
       inlineStylesheet: true,
       blockClass:       'eye-block',
       maskTextClass:    'eye-mask',
-      
-      // CHANGE THESE TWO:
-      recordCanvas: true,             // Capture charts/maps
-      recordCrossOriginIframes: true, // Capture external widgets
-      
-      // ADD THIS:
+
+      // Prefer reliability over fragile canvas/iframe capture in v1.
+      recordCanvas: false,
+      recordCrossOriginIframes: false,
       collectFonts: true
     });
   }
 
-  // Flush every 5 s and on page unload.
-  var flushInterval = setInterval(flush, 5000);
+  // Flush every 3 s and on page unload.
+  var flushInterval = setInterval(flush, 3000);
   w.addEventListener('pagehide',     flush);
   w.addEventListener('beforeunload', flush);
 

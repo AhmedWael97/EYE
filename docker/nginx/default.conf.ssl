@@ -50,7 +50,7 @@ server {
     root /var/www/backend/public;
     index index.php;
 
-    client_max_body_size 10M;
+    client_max_body_size 25M;
 
     # ─── SSL certificates (Let's Encrypt via Certbot) ─────────────────────
     ssl_certificate     /etc/letsencrypt/live/DOMAIN/fullchain.pem;

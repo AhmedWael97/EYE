@@ -205,9 +205,9 @@ jobs:
             echo "==> Pulling latest code..."
             git pull origin main
             # Pull each submodule on its own default branch
-            git -C backend pull origin main  || true
-            git -C frontend pull origin master || true
-            git -C tracker  pull origin main  || true
+            git -C backend pull origin main || true
+            git -C frontend pull origin main || git -C frontend pull origin master || true
+            git -C tracker  pull origin main || true
 
             # ── Always: composer install (new packages may arrive with any pull) ──
             echo "==> [BACKEND] composer install..."
@@ -218,9 +218,11 @@ jobs:
             if [ "$BACKEND_CHANGED" = "true" ]; then
               echo "==> [BACKEND] Running migrations..."
               docker compose exec -T php-fpm php artisan migrate --force
+              echo "==> [BACKEND] Restarting php-fpm to load new code/config..."
+              docker compose restart php-fpm
               echo "==> [BACKEND] Restarting Horizon & Queue workers..."
               docker compose exec -T php-fpm php artisan horizon:terminate || true
-              docker compose restart laravel-horizon laravel-queue laravel-reverb
+              docker compose restart laravel-horizon laravel-scheduler laravel-reverb
             fi
 
             # ── Always: refresh config + route caches ────────────────────
@@ -236,13 +238,14 @@ jobs:
               echo "==> [FRONTEND] Rebuilding Next.js container..."
               # Read env vars from the server-local .env.local (not committed)
               set -a; source frontend/.env.local; set +a
-              docker compose up -d --build node
+              docker compose up -d --build --force-recreate node
             fi
 
             # ── Tracker changed ───────────────────────────────────────────
             if [ "$TRACKER_CHANGED" = "true" ]; then
               echo "==> [TRACKER] Rebuilding tracker bundle..."
-              docker compose up -d tracker-build --no-deps
+              docker compose up -d --no-deps tracker-build
+              docker compose restart nginx
             fi
 
             # ── Always: restart nginx so container IPs are re-resolved ────

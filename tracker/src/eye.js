@@ -228,8 +228,15 @@
     d.addEventListener('click', function (ev) {
       var x = ev.clientX, y = ev.clientY, now = Date.now();
       var primaryTarget = resolveClickableTarget(ev.target);
+      var baseClickMeta = targetMeta(primaryTarget);
+      baseClickMeta.x = Math.round(x);
+      baseClickMeta.y = Math.round(y);
       clickBuf = clickBuf.filter(function (c) { return now - c.t < 600; });
       clickBuf.push({ x: x, y: y, t: now });
+
+      // Capture normal clicks so the dashboard can render true click heatmaps.
+      enqueue('click', baseClickMeta);
+
       var nearby = clickBuf.filter(function (c) {
         var dx = c.x - x, dy = c.y - y;
         return Math.sqrt(dx * dx + dy * dy) <= 30;
@@ -244,11 +251,10 @@
       if (ev.target && ev.target.closest) {
         var tracked = ev.target.closest('[data-eye-track]');
         if (tracked) {
-          var trackedMeta = targetMeta(tracked);
-          trackedMeta.label = tracked.getAttribute('data-eye-track') || '';
-          trackedMeta.x = Math.round(x);
-          trackedMeta.y = Math.round(y);
-          enqueue('click', trackedMeta);
+          var trackedLabel = tracked.getAttribute('data-eye-track') || '';
+          if (trackedLabel) {
+            enqueue('custom', { e: 'tracked_click', p: { label: trackedLabel, el: baseClickMeta.el, x: baseClickMeta.x, y: baseClickMeta.y } });
+          }
         }
       }
       // Dead click — no DOM mutation within 300ms
