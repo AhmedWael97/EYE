@@ -203,7 +203,14 @@ jobs:
             cd ${{ secrets.VPS_PATH }}
 
             echo "==> Pulling latest code..."
-            git pull origin main
+            if ! git pull --rebase --autostash origin main; then
+              echo "==> WARNING: pull failed (possibly unrelated histories). Backing up and resetting to origin/main..."
+              TS=$(date +%Y%m%d-%H%M%S)
+              git branch "backup/pre-reset-$TS" || true
+              git stash push -u -m "pre-reset-$TS" || true
+              git fetch origin main
+              git reset --hard origin/main
+            fi
             # Pull each submodule on its own default branch
             git -C backend pull origin main || true
             git -C frontend pull origin main || git -C frontend pull origin master || true
@@ -263,7 +270,7 @@ jobs:
             # ── Final health check ────────────────────────────────────────
             echo "==> Health check..."
             sleep 5
-            curl -sf http://localhost/api/health && echo "Health: OK" || echo "WARNING: health check failed"
+            curl -sf http://localhost/api/v1/health && echo "Health: OK" || echo "WARNING: health check failed"
 
             docker image prune -f
             echo "==> Deployment complete!"
