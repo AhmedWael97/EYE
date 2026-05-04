@@ -210,6 +210,21 @@
       }
     });
 
+    // Heartbeat — send time_on_page every 30 s while the tab is visible.
+    // Ensures sessions are not reported as 0-duration when the tab is closed
+    // abruptly (e.g. mobile Safari where visibilitychange is unreliable).
+    var heartbeatTimer;
+    function startHeartbeat() {
+      clearInterval(heartbeatTimer);
+      heartbeatTimer = setInterval(function () {
+        if (d.visibilityState !== 'hidden') {
+          enqueue('time_on_page', { d: Math.round((Date.now() - pageAt) / 1000) });
+          flush();
+        }
+      }, 30000);
+    }
+    startHeartbeat();
+
     // JS errors
     w.addEventListener('error', function (ev) {
       enqueue('js_error', {
@@ -257,8 +272,12 @@
           }
         }
       }
-      // Dead click — no DOM mutation within 300ms
-      if (w.MutationObserver && d.documentElement) {
+      // Dead click — no DOM mutation within 500ms, and target is not a known
+      // non-interactive element (links and form fields always "respond" via browser).
+      var tag = (primaryTarget.tagName || '').toLowerCase();
+      var isNativeInteractive = tag === 'a' || tag === 'input' || tag === 'select' ||
+        tag === 'textarea' || tag === 'button' || tag === 'label';
+      if (w.MutationObserver && d.documentElement && !isNativeInteractive) {
         var changed = false;
         var obs = new MutationObserver(function () { changed = true; obs.disconnect(); });
         obs.observe(d.documentElement, { childList: true, subtree: true, attributes: true });
@@ -270,7 +289,7 @@
             deadMeta.y = Math.round(y);
             enqueue('dead_click', deadMeta);
           }
-        }, 300);
+        }, 500);
       }
       matchPipelines();
     }, true);
@@ -346,6 +365,7 @@
         w._eyeSid = sid;
         parseUtm();
         doPageview();
+        startHeartbeat(); // Restart heartbeat for the new page
       }
     };
     if (w.history) {

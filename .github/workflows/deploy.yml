@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force full re-deploy (ignore changed-paths filter)'
+        required: false
+        default: 'false'
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -156,17 +162,18 @@ jobs:
   changes:
     name: Detect Changed Paths
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      backend: ${{ steps.filter.outputs.backend }}
-      tracker: ${{ steps.filter.outputs.tracker }}
+      frontend: ${{ steps.filter.outputs.frontend || github.event.inputs.force_deploy == 'true' }}
+      backend: ${{ steps.filter.outputs.backend || github.event.inputs.force_deploy == 'true' }}
+      tracker: ${{ steps.filter.outputs.tracker || github.event.inputs.force_deploy == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - uses: dorny/paths-filter@v3
         id: filter
+        if: github.event_name != 'workflow_dispatch'
         with:
           filters: |
             frontend:
@@ -183,7 +190,9 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: [backend-tests, frontend-checks, tracker-tests, changes]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: |
+      github.event_name == 'push' && github.ref == 'refs/heads/main' ||
+      github.event_name == 'workflow_dispatch'
     environment: production
     timeout-minutes: 30
 
@@ -202,6 +211,9 @@ jobs:
             set -e
             cd ${{ secrets.VPS_PATH }}
 
+            # ── Always target the production compose file ──────────────────
+            export COMPOSE_FILE=docker-compose.prod.yml
+
             echo "==> Pulling latest code..."
             if ! git pull --rebase --autostash origin main; then
               echo "==> WARNING: pull failed (possibly unrelated histories). Backing up and resetting to origin/main..."
@@ -211,10 +223,6 @@ jobs:
               git fetch origin main
               git reset --hard origin/main
             fi
-            # Pull each submodule on its own default branch
-            git -C backend pull origin main || true
-            git -C frontend pull origin main || git -C frontend pull origin master || true
-            git -C tracker  pull origin main || true
 
             # ── Always: composer install (new packages may arrive with any pull) ──
             echo "==> [BACKEND] composer install..."
@@ -275,6 +283,6 @@ jobs:
             docker image prune -f
             echo "==> Deployment complete!"
         env:
-          FRONTEND_CHANGED: ${{ needs.changes.outputs.frontend }}
-          BACKEND_CHANGED: ${{ needs.changes.outputs.backend }}
-          TRACKER_CHANGED: ${{ needs.changes.outputs.tracker }}
+          FRONTEND_CHANGED: ${{ needs.changes.outputs.frontend || github.event.inputs.force_deploy }}
+          BACKEND_CHANGED: ${{ needs.changes.outputs.backend || github.event.inputs.force_deploy }}
+          TRACKER_CHANGED: ${{ needs.changes.outputs.tracker || github.event.inputs.force_deploy }}

@@ -35,17 +35,22 @@ import { record } from 'rrweb';
   // ── Read visitor / session IDs written by eye.js ─────────────────────────
   function getVid() { return w._eyeVid || (function () { try { return localStorage.getItem('_eye_vid') || ''; } catch (_) { return ''; } }()); }
   function getSid() { return w._eyeSid || (function () { try { return localStorage.getItem('_eye_sid') || ''; } catch (_) { return ''; } }()); }
+  function hasIds() { return !!getVid() && !!getSid(); }
 
   // ── Event buffer ──────────────────────────────────────────────────────────
   var buf = [];
 
   function flush() {
     if (!buf.length) return;
+    if (!hasIds()) return;
+
+    var sid = getSid();
+    var vid = getVid();
     var batch = buf.splice(0);
     var payload = JSON.stringify({
       t:      TOKEN,
-      vid:    getVid(),
-      sid:    getSid(),
+      vid:    vid,
+      sid:    sid,
       events: batch,
     });
 
@@ -68,16 +73,24 @@ import { record } from 'rrweb';
           keepalive:   useKeepalive,
           credentials: 'omit',
         }).catch(function () {
+          Array.prototype.unshift.apply(buf, batch);
           try { sendViaXhr(payload); } catch (_) {}
         });
       } else {
         sendViaXhr(payload);
       }
-    } catch (_) {}
+    } catch (_) {
+      Array.prototype.unshift.apply(buf, batch);
+    }
   }
 
   // ── Start rrweb recording ─────────────────────────────────────────────────
   function startRecording() {
+    if (!hasIds()) {
+      setTimeout(startRecording, 300);
+      return;
+    }
+
     record({
       emit: function (event) {
         buf.push(event);
@@ -86,6 +99,7 @@ import { record } from 'rrweb';
         // If it's a FullSnapshot (2) or Meta (4), we want to send it 
         // immediately so the player has the "base" layer.
         if (event.type === 2 || event.type === 4) {
+          console.log('[EYE Replay] Flushing ' + (event.type === 2 ? 'FullSnapshot' : 'Meta') + ' event');
           flush();
         } else if (buf.length >= 50) {
           flush();
@@ -102,6 +116,7 @@ import { record } from 'rrweb';
       recordCrossOriginIframes: false,
       collectFonts: true
     });
+    console.log('[EYE Replay] Recording started for session', getSid());
   }
 
   // Flush every 3 s and on page unload.
@@ -121,11 +136,21 @@ import { record } from 'rrweb';
   }, 500);
 
   // Defer recording start off the critical render path.
-  if (w.requestIdleCallback) {
-    w.requestIdleCallback(startRecording, { timeout: 200 });
-  } else {
-    setTimeout(startRecording, 0);
+  // Wait for the page to fully load + 500ms for JS framework hydration
+  // (React/Next.js/Vue/Angular often render null values until API data arrives).
+  // Starting too early captures skeleton/loading states with "null" text nodes.
+  function scheduleRecording() {
+    if (d.readyState === 'complete') {
+      // Page already loaded — still wait 500ms for framework hydration
+      setTimeout(startRecording, 500);
+    } else {
+      w.addEventListener('load', function () {
+        // Extra 500ms after load event for framework hydration
+        setTimeout(startRecording, 500);
+      }, { once: true });
+    }
   }
+  scheduleRecording();
 
   // Expose flush for testing.
   w._eyeReplayFlush = flush;
