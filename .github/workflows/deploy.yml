@@ -59,10 +59,11 @@ jobs:
           - 8123:8123
           - 9000:9000
         options: >-
-          --health-cmd "wget -qO- http://localhost:8123/ping"
+          --health-cmd "clickhouse-client --query='SELECT 1'"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 10s
+          --health-retries 10
+          --health-start-period 30s
 
     steps:
       - uses: actions/checkout@v4
