@@ -6,6 +6,7 @@
 // ── Fake timer setup ──────────────────────────────────────────────────────────
 beforeEach(() => {
   jest.useFakeTimers();
+  navigator.sendBeacon = jest.fn();
 });
 
 afterEach(() => {

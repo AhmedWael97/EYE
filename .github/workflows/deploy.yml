@@ -18,7 +18,7 @@ concurrency:
 
 env:
   PHP_VERSION: "8.3"
-  NODE_VERSION: "20"
+  NODE_VERSION: "24"
 
 jobs:
   # ═══════════════════════════════════════════════════════════════════════════
@@ -53,8 +53,21 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      clickhouse:
+        image: clickhouse/clickhouse-server:24.3-alpine
+        ports:
+          - 8123:8123
+          - 9000:9000
+        options: >-
+          --health-cmd "wget -qO- http://localhost:8123/ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -85,6 +98,7 @@ jobs:
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=secret/' .env
           sed -i 's/REDIS_HOST=.*/REDIS_HOST=127.0.0.1/' .env
           sed -i 's/REDIS_PASSWORD=.*/REDIS_PASSWORD=/' .env
+          sed -i 's/CLICKHOUSE_HOST=.*/CLICKHOUSE_HOST=127.0.0.1/' .env
 
       - name: Run migrations
         working-directory: backend
@@ -103,6 +117,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

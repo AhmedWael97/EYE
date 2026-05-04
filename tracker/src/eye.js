@@ -64,6 +64,13 @@
     if (!queue.length) return;
     var batch = queue.splice(0);
     var body = JSON.stringify(batch);
+    try {
+      if (n.sendBeacon) {
+        var blob = new Blob([body], { type: 'application/json' });
+        n.sendBeacon(API, blob);
+        return;
+      }
+    } catch (_) {}
     if (w.fetch) {
       fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true, credentials: 'omit' }).catch(function () {});
     } else {
@@ -75,6 +82,7 @@
   }
 
   function enqueue(type, extra) {
+    if (getCookie('_eye_optout') || getCookie('_eye_exclude')) return;
     if (!vid) initIds();
     var ev = {
       t: TOKEN, e: type,
