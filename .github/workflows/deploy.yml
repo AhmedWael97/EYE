@@ -271,6 +271,7 @@ jobs:
             docker compose exec -T php-fpm php artisan route:clear
             docker compose exec -T php-fpm php artisan route:cache
             docker compose exec -T php-fpm php artisan view:clear
+            docker compose exec -T php-fpm php artisan storage:link --force
 
             # ── Always: rebuild Next.js image ────────────────────────────
             echo "==> [FRONTEND] Rebuilding Next.js container..."
