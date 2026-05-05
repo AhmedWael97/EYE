@@ -6,4 +6,4 @@
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/AhmedWael97/frontend.git
-	branch = main
+	branch = master

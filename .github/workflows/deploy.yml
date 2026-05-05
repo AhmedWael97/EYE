@@ -245,7 +245,12 @@ jobs:
             fi
 
             echo "==> Updating submodules..."
-            git submodule update --init --recursive
+            git submodule sync --recursive
+            # Explicitly fetch each submodule's tracking branch and reset to it.
+            # This avoids the "not our ref" GitHub error that occurs when git tries
+            # to directly fetch a pinned SHA that isn't yet in the local refspec cache.
+            (cd backend  && git fetch origin main   && git reset --hard origin/main)
+            (cd frontend && git fetch origin master && git reset --hard origin/master)
 
             # ── Always: composer install (new packages may arrive with any pull) ──
             echo "==> [BACKEND] composer install..."
