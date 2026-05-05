@@ -153,6 +153,7 @@ $response = Http::connectTimeout(10)
 ---
 
 
+
 ## Fix 4: Frontend Screenshot API Route
 
 ### File: `frontend/src/app/api/ux/screenshot/route.ts`
