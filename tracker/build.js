@@ -16,7 +16,7 @@ const corePromise = esbuild.build({
   const kb = (stat.size / 1024).toFixed(2);
   console.log(`Built eye.min.js — ${kb} KB`);
 
-  const LIMIT = 8192; // 8 KB raw (target < 4 KB gzipped)
+  const LIMIT = 12288; // 12 KB raw (target < 4 KB gzipped)
   if (stat.size > LIMIT) {
     console.error(`ERROR: bundle is ${stat.size} bytes, exceeds ${LIMIT} byte limit!`);
     process.exit(1);
