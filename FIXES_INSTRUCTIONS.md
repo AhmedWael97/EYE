@@ -181,7 +181,7 @@ if (!authHeader.startsWith("Bearer ") && !isInternalRequest) {
 ```
 
 **Also add to the Laravel controller to pass the internal header:**
-```php
+```php 
 $response = Http::connectTimeout(10)
     ->timeout(45)
     ->withToken($token)
