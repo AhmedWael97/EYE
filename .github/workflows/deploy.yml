@@ -195,10 +195,13 @@ jobs:
           filters: |
             frontend:
               - 'frontend/**'
+              - 'frontend'
             backend:
               - 'backend/**'
+              - 'backend'
             tracker:
               - 'tracker/**'
+              - 'tracker'
 
   # ═══════════════════════════════════════════════════════════════════════════
   # Deploy to VPS (only on push to main, after all tests pass)
@@ -240,6 +243,9 @@ jobs:
               git fetch origin main
               git reset --hard origin/main
             fi
+
+            echo "==> Updating submodules..."
+            git submodule update --init --recursive
 
             # ── Always: composer install (new packages may arrive with any pull) ──
             echo "==> [BACKEND] composer install..."
