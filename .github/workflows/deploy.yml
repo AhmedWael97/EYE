@@ -252,23 +252,19 @@ jobs:
             (cd backend  && git fetch origin main   && git reset --hard origin/main)
             (cd frontend && git fetch origin master && git reset --hard origin/master)
 
-            # ── Always: composer install (new packages may arrive with any pull) ──
+            # ── Always: composer install + migrate + recache ─────────────
             echo "==> [BACKEND] composer install..."
             docker compose exec -T php-fpm composer install \
               --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
-            # ── Backend changed: migrate + recache ───────────────────────
-            if [ "$BACKEND_CHANGED" = "true" ]; then
-              echo "==> [BACKEND] Running migrations..."
-              docker compose exec -T php-fpm php artisan migrate --force
-              echo "==> [BACKEND] Restarting php-fpm to load new code/config..."
-              docker compose restart php-fpm
-              echo "==> [BACKEND] Restarting Horizon & Queue workers..."
-              docker compose exec -T php-fpm php artisan horizon:terminate || true
-              docker compose restart laravel-horizon laravel-scheduler laravel-reverb
-            fi
+            echo "==> [BACKEND] Running migrations..."
+            docker compose exec -T php-fpm php artisan migrate --force
 
-            # ── Always: refresh config + route caches ────────────────────
+            echo "==> [BACKEND] Restarting php-fpm + workers to pick up new code..."
+            docker compose restart php-fpm
+            docker compose exec -T php-fpm php artisan horizon:terminate || true
+            docker compose restart laravel-horizon laravel-scheduler laravel-reverb
+
             echo "==> [BACKEND] Recaching config & routes..."
             docker compose exec -T php-fpm php artisan config:clear
             docker compose exec -T php-fpm php artisan config:cache
@@ -276,20 +272,14 @@ jobs:
             docker compose exec -T php-fpm php artisan route:cache
             docker compose exec -T php-fpm php artisan view:clear
 
-            # ── Frontend changed: rebuild Next.js image ───────────────────
-            if [ "$FRONTEND_CHANGED" = "true" ]; then
-              echo "==> [FRONTEND] Rebuilding Next.js container..."
-              # Read env vars from the server-local .env.local (not committed)
-              set -a; source frontend/.env.local; set +a
-              docker compose up -d --build --force-recreate node
-            fi
+            # ── Always: rebuild Next.js image ────────────────────────────
+            echo "==> [FRONTEND] Rebuilding Next.js container..."
+            set -a; source frontend/.env.local; set +a
+            docker compose up -d --build --force-recreate node
 
-            # ── Tracker changed ───────────────────────────────────────────
-            if [ "$TRACKER_CHANGED" = "true" ]; then
-              echo "==> [TRACKER] Rebuilding tracker bundle..."
-              docker compose up -d --no-deps tracker-build
-              docker compose restart nginx
-            fi
+            # ── Always: rebuild tracker bundle ────────────────────────────
+            echo "==> [TRACKER] Rebuilding tracker bundle..."
+            docker compose up -d --no-deps tracker-build
 
             # ── Always: restart nginx so container IPs are re-resolved ────
             echo "==> Restarting nginx..."
