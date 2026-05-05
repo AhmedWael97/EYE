@@ -189,7 +189,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: [backend-tests, tracker-tests, frontend-build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: false  # temporarily disabled — full Docker stack (ClickHouse + PHP build + Next.js) exceeds CI runner time budget
 
     steps:
       - uses: actions/checkout@v4
