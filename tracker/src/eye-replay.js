@@ -95,17 +95,18 @@ import { record } from 'rrweb';
       emit: function (event) {
         buf.push(event);
 
-        // FORCE FLUSH on snapshot: 
-        // If it's a FullSnapshot (2) or Meta (4), we want to send it 
-        // immediately so the player has the "base" layer.
-        if (event.type === 2 || event.type === 4) {
-          console.log('[EYE Replay] Flushing ' + (event.type === 2 ? 'FullSnapshot' : 'Meta') + ' event');
+        // Flush the buffer immediately after a FullSnapshot (type 2).
+        // The preceding Meta event (type 4) is already in buf at this point
+        // because rrweb emits Meta → FullSnapshot consecutively, so both
+        // land in the same HTTP batch in the correct order — eliminating the
+        // race condition that occurred when they were flushed separately.
+        if (event.type === 2) {
           flush();
         } else if (buf.length >= 50) {
           flush();
         }
       },
-      checkoutEveryNms: 10000,        // CRITICAL FIX: 10s instead of 30s for frequent FullSnapshot
+      checkoutEveryNms: 30000,        // Full DOM snapshot every 30 s (enables seeking)
       maskAllInputs:    true,
       inlineStylesheet: true,
       blockClass:       'eye-block',
@@ -116,7 +117,6 @@ import { record } from 'rrweb';
       recordCrossOriginIframes: false,
       collectFonts: true
     });
-    console.log('[EYE Replay] Recording started for session', getSid());
   }
 
   // Flush every 3 s and on page unload.
