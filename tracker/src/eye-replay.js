@@ -54,30 +54,45 @@ import { record } from 'rrweb';
       events: batch,
     });
 
-    function sendViaXhr(body) {
-      var x = new XMLHttpRequest();
-      x.open('POST', API + '/replay', true);
-      x.setRequestHeader('Content-Type', 'application/json');
-      x.send(body);
+    var url = API + '/replay';
+
+    // sendBeacon sends a text/plain POST — no CORS preflight is triggered,
+    // making it the most reliable cross-origin transport for analytics data.
+    // The backend's Content-Type check must accept text/plain (or be flexible).
+    if (w.navigator && w.navigator.sendBeacon) {
+      try {
+        // Wrap JSON in a Blob with text/plain to stay within the CORS
+        // "simple request" category (no OPTIONS preflight).
+        var blob = new Blob([payload], { type: 'text/plain' });
+        if (w.navigator.sendBeacon(url, blob)) return;
+      } catch (_) {}
     }
 
+    // Fallback 1: fetch with keepalive (fires even on page unload, no preflight
+    // concern here because the server already sent Access-Control-Allow-Origin:*)
     try {
       if (w.fetch) {
-        // keepalive requests are size-limited in browsers (~64KB);
-        // large FullSnapshot payloads can be dropped if keepalive is forced.
         var useKeepalive = payload.length < 60000;
-        fetch(API + '/replay', {
+        fetch(url, {
           method:      'POST',
           headers:     { 'Content-Type': 'application/json' },
           body:        payload,
           keepalive:   useKeepalive,
           credentials: 'omit',
         }).catch(function () {
-          Array.prototype.unshift.apply(buf, batch);
-          try { sendViaXhr(payload); } catch (_) {}
+          // Fallback 2: plain XHR
+          try {
+            var x = new XMLHttpRequest();
+            x.open('POST', url, true);
+            x.setRequestHeader('Content-Type', 'application/json');
+            x.send(payload);
+          } catch (_) {}
         });
       } else {
-        sendViaXhr(payload);
+        var x = new XMLHttpRequest();
+        x.open('POST', url, true);
+        x.setRequestHeader('Content-Type', 'application/json');
+        x.send(payload);
       }
     } catch (_) {
       Array.prototype.unshift.apply(buf, batch);
