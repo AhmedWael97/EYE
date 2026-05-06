@@ -66,7 +66,8 @@
     var body = JSON.stringify(batch);
     try {
       if (n.sendBeacon) {
-        var blob = new Blob([body], { type: 'application/json' });
+        // text/plain blob = "simple request" — no CORS preflight fired by the browser.
+        var blob = new Blob([body], { type: 'text/plain' });
         n.sendBeacon(API, blob);
         return;
       }
