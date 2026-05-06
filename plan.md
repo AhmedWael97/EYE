@@ -1190,7 +1190,6 @@ Route::get('summary', SummaryController::class)->name('summary');
 10. **GDPR jurisdiction:** Is the product primarily targeting EU customers? If yes, a cookie consent banner on end-user websites should be part of the tracker's documentation/guidance.
 
 
-
 wsl -d Ubuntu -e sh -c "cd /mnt/h/coupons/githubs/eye && docker compose up -d"
 
 
