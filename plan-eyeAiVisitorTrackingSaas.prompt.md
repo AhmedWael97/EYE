@@ -1,5 +1,6 @@
 # Plan: EYE — AI Visitor Tracking SaaS
 
+
 ## Stack
 - Backend: Laravel 11 (PHP 8.3)
 - Frontend: Next.js 14 (App Router, React)
