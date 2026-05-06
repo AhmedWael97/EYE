@@ -1192,7 +1192,6 @@ Route::get('summary', SummaryController::class)->name('summary');
 
 wsl -d Ubuntu -e sh -c "cd /mnt/h/coupons/githubs/eye && docker compose up -d"
 
-
 Service	URL
 Frontend (Next.js)	http://localhost:3000
 Backend API (via Nginx)	http://localhost/api
