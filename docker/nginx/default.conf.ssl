@@ -13,11 +13,18 @@ upstream reverb_ws {
     keepalive 8;
 }
 
+# ─── URI map: non-versioned tracker paths → /api/v1/... for PHP routing ──────
+map $request_uri $eye_effective_uri {
+    ~^/api/(track|collect)(/.+)$  /api/v1/$1$2;
+    ~^/api/(track|collect)$       /api/v1/$1;
+    default                       $request_uri;
+}
+
 # ─── Rate limiting zones ──────────────────────────────────────────────────────
 limit_req_zone $binary_remote_addr zone=track_limit:10m rate=300r/m;
 limit_req_zone $binary_remote_addr zone=auth_limit:10m rate=10r/m;
 
-# ─── CORS origin map ─────────────────────────────────────────────────────────
+# ─── CORS origin map (dashboard/admin only — tracker uses wildcard *) ─────────
 map $http_origin $cors_origin {
     default "";
     "https://DOMAIN"        "https://DOMAIN";
@@ -84,12 +91,56 @@ server {
         try_files $uri =404;
     }
 
-    # ─── Tracking ingestion (rate limited) ───────────────────────────────
-    location = /api/track {
+    # ── Tracker public endpoints — allow any origin (customer sites) ──────────
+    location ~ ^/api/(v1/)?(track|collect)(/|$) {
         limit_req zone=track_limit burst=50 nodelay;
-        add_header Access-Control-Allow-Origin $cors_origin always;
-        add_header Access-Control-Allow-Credentials "true" always;
-        try_files $uri /index.php?$query_string;
+
+        if ($request_method = OPTIONS) {
+            add_header Access-Control-Allow-Origin "*" always;
+            add_header Access-Control-Allow-Methods "POST, OPTIONS" always;
+            add_header Access-Control-Allow-Headers "Content-Type, X-Eye-Token" always;
+            add_header Access-Control-Max-Age 86400 always;
+            add_header Content-Length 0;
+            return 204;
+        }
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Allow-Methods "POST, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Content-Type, X-Eye-Token" always;
+
+        # Pass to PHP-FPM directly with explicit params.
+        # REQUEST_URI uses $eye_effective_uri so non-versioned paths
+        # (/api/collect/*) are seen by Laravel as /api/v1/collect/*
+        fastcgi_pass php_fpm;
+        fastcgi_param QUERY_STRING      $query_string;
+        fastcgi_param REQUEST_METHOD    $request_method;
+        fastcgi_param CONTENT_TYPE      $content_type;
+        fastcgi_param CONTENT_LENGTH    $content_length;
+        fastcgi_param SCRIPT_FILENAME   $document_root/index.php;
+        fastcgi_param SCRIPT_NAME       /index.php;
+        fastcgi_param REQUEST_URI       $eye_effective_uri;
+        fastcgi_param DOCUMENT_URI      /index.php;
+        fastcgi_param DOCUMENT_ROOT     $document_root;
+        fastcgi_param SERVER_PROTOCOL   $server_protocol;
+        fastcgi_param REQUEST_SCHEME    $scheme;
+        fastcgi_param HTTPS             $https if_not_empty;
+        fastcgi_param GATEWAY_INTERFACE CGI/1.1;
+        fastcgi_param SERVER_SOFTWARE   nginx/$nginx_version;
+        fastcgi_param REMOTE_ADDR       $remote_addr;
+        fastcgi_param REMOTE_PORT       $remote_port;
+        fastcgi_param SERVER_ADDR       $server_addr;
+        fastcgi_param SERVER_PORT       $server_port;
+        fastcgi_param SERVER_NAME       $server_name;
+        fastcgi_param HTTP_X_REAL_IP    $remote_addr;
+        fastcgi_param HTTP_X_FORWARDED_FOR   $proxy_add_x_forwarded_for;
+        fastcgi_param HTTP_X_FORWARDED_PROTO $scheme;
+        fastcgi_read_timeout 60s;
+        fastcgi_hide_header Access-Control-Allow-Origin;
+        fastcgi_hide_header Access-Control-Allow-Methods;
+        fastcgi_hide_header Access-Control-Allow-Headers;
+        fastcgi_hide_header Access-Control-Allow-Credentials;
+        fastcgi_hide_header Access-Control-Expose-Headers;
+        fastcgi_hide_header Access-Control-Max-Age;
     }
 
     # ─── Auth endpoints (rate limited) ───────────────────────────────────
@@ -175,6 +226,14 @@ server {
         fastcgi_read_timeout 60s;
         fastcgi_buffers 16 16k;
         fastcgi_buffer_size 32k;
+        # Strip Laravel CORS headers — nginx sets them on the outer location blocks
+        # to prevent duplicate Access-Control-Allow-Origin values.
+        fastcgi_hide_header Access-Control-Allow-Origin;
+        fastcgi_hide_header Access-Control-Allow-Methods;
+        fastcgi_hide_header Access-Control-Allow-Headers;
+        fastcgi_hide_header Access-Control-Allow-Credentials;
+        fastcgi_hide_header Access-Control-Expose-Headers;
+        fastcgi_hide_header Access-Control-Max-Age;
         add_header Access-Control-Allow-Origin $cors_origin always;
         add_header Access-Control-Allow-Credentials "true" always;
         add_header Access-Control-Expose-Headers "Authorization" always;
