@@ -72,23 +72,19 @@ SETTINGS index_granularity = 8192;
 
 CREATE TABLE IF NOT EXISTS ux_events
 (
-    domain_id        UInt64,
-    session_id       UUID,
-    visitor_id       UUID,
-    type             LowCardinality(String),  -- rage_click | dead_click | js_error | scroll
+    domain_id        UInt32,
+    session_id       String,
+    visitor_id       String,
+    type             LowCardinality(String),  -- rage_click | dead_click | js_error | click | page_load | slow_resources | …
     url              String,
     element_selector String,
-    x                UInt16,
-    y                UInt16,
-    scroll_depth     UInt8,                   -- 0-100 %
-    message          String,                  -- JS error message
-    stack_trace      String,
-    ts               DateTime('UTC')
+    details          String,                  -- JSON payload (coords for clicks, timings for page_load, resources for slow_resources)
+    created_at       DateTime DEFAULT now()
 )
 ENGINE = MergeTree()
-PARTITION BY toYYYYMM(ts)
-ORDER BY (domain_id, ts, session_id)
-TTL ts + INTERVAL 90 DAY DELETE
+PARTITION BY toYYYYMM(created_at)
+ORDER BY (domain_id, created_at)
+TTL created_at + toIntervalDay(365)
 SETTINGS index_granularity = 8192;
 
 
