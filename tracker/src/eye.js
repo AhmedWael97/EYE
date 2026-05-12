@@ -15,7 +15,7 @@
   var RESPECT_DNT = el && el.getAttribute('data-respect-dnt') === 'true';
 
   // ── Bot detection ─────────────────────────────────────────────────────────
-  if (n.webdriver || /HeadlessChrome|Puppeteer|Playwright|PhantomJS|SlimerJS/i.test(n.userAgent || '')) return;
+  if (n.webdriver || /HeadlessChrome|Puppeteer|Playwright|PhantomJS/i.test(n.userAgent || '')) return;
 
   // ── Cookie helpers ────────────────────────────────────────────────────────
   function getCookie(name) {
@@ -151,8 +151,6 @@
       id: (el.id || '').slice(0, 80),
       cl: classes,
       tx: text,
-      ar: (el.getAttribute && (el.getAttribute('aria-label') || '') || '').slice(0, 80),
-      rl: (el.getAttribute && (el.getAttribute('role') || '') || '').slice(0, 40),
       hr: (el.getAttribute && (el.getAttribute('href') || '') || '').slice(0, 200),
       nm: (el.getAttribute && (el.getAttribute('name') || '') || '').slice(0, 80),
       tp: (el.getAttribute && (el.getAttribute('type') || '') || '').slice(0, 40),
@@ -161,7 +159,7 @@
 
   function resolveClickableTarget(el) {
     if (!el || !el.closest) return el;
-    return el.closest('button,a,[role="button"],input[type="button"],input[type="submit"],[data-eye-track],[onclick]') || el;
+    return el.closest('button,a,[role=button],input[type=button],input[type=submit],[data-eye-track],[onclick]') || el;
   }
 
   // ── Pipeline step matching ────────────────────────────────────────────────
@@ -239,12 +237,12 @@
       enqueue('js_error', {
         msg: ev.message || '', src: ev.filename || '',
         ln: ev.lineno || 0, col: ev.colno || 0,
-        stk: ev.error && ev.error.stack ? ev.error.stack.slice(0, 500) : '',
+        stk: ev.error && ev.error.stack ? ev.error.stack.slice(0, 300) : '',
       });
     });
     w.addEventListener('unhandledrejection', function (ev) {
-      var msg = ev.reason ? (ev.reason.message || String(ev.reason)) : 'Unhandled rejection';
-      enqueue('js_error', { msg: msg, stk: ev.reason && ev.reason.stack ? ev.reason.stack.slice(0, 500) : '' });
+      var msg = ev.reason ? (ev.reason.message || String(ev.reason)) : '';
+      enqueue('js_error', { msg: msg, stk: ev.reason && ev.reason.stack ? ev.reason.stack.slice(0, 300) : '' });
     });
 
     // Rage click + dead click + opted-in clicks
@@ -328,12 +326,8 @@
       var href = a.getAttribute('href');
       if (!href || href[0] === '#' || href.indexOf('javascript:') === 0) return;
       try {
-        fetch(href, { method: 'HEAD', mode: 'no-cors' }).then(function (r) {
-          if (r.status === 404) {
-            var linkMeta = targetMeta(a);
-            linkMeta.url = href;
-            enqueue('broken_link', linkMeta);
-          }
+        fetch(href, { method: 'HEAD' }).then(function (r) {
+          if (r.status === 404) enqueue('broken_link', { url: href });
         }).catch(function () {});
       } catch (_) {}
     }, true);
