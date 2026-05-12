@@ -251,10 +251,16 @@
     var clickBuf = [];
     d.addEventListener('click', function (ev) {
       var x = ev.clientX, y = ev.clientY, now = Date.now();
+      // Compute coordinates as % of full page dimensions so heatmap dots
+      // align correctly over a full-page screenshot regardless of scroll position.
+      var pageW = (d.documentElement && d.documentElement.scrollWidth) || (d.body && d.body.scrollWidth) || w.innerWidth || 1;
+      var pageH = (d.documentElement && d.documentElement.scrollHeight) || (d.body && d.body.scrollHeight) || w.innerHeight || 1;
+      var xPct = Math.min(100, Math.max(0, Math.round((ev.pageX / pageW) * 1000) / 10));
+      var yPct = Math.min(100, Math.max(0, Math.round((ev.pageY / pageH) * 1000) / 10));
       var primaryTarget = resolveClickableTarget(ev.target);
       var baseClickMeta = targetMeta(primaryTarget);
-      baseClickMeta.x = Math.round(x);
-      baseClickMeta.y = Math.round(y);
+      baseClickMeta.x = xPct;
+      baseClickMeta.y = yPct;
       clickBuf = clickBuf.filter(function (c) { return now - c.t < 600; });
       clickBuf.push({ x: x, y: y, t: now });
 
@@ -267,8 +273,8 @@
       });
       if (nearby.length >= 3) {
         var rageMeta = targetMeta(primaryTarget);
-        rageMeta.x = Math.round(x);
-        rageMeta.y = Math.round(y);
+        rageMeta.x = xPct;
+        rageMeta.y = yPct;
         enqueue('rage_click', rageMeta);
         clickBuf = [];
       }
@@ -294,8 +300,8 @@
           obs.disconnect();
           if (!changed) {
             var deadMeta = targetMeta(primaryTarget);
-            deadMeta.x = Math.round(x);
-            deadMeta.y = Math.round(y);
+            deadMeta.x = xPct;
+            deadMeta.y = yPct;
             enqueue('dead_click', deadMeta);
           }
         }, 500);
@@ -356,6 +362,79 @@
       } catch (_) {}
       w.addEventListener('pagehide', reportVitals);
       d.addEventListener('visibilitychange', function () { if (d.visibilityState === 'hidden') reportVitals(); });
+
+      // ── Resource timing — detect slow assets ─────────────────────────────
+      // Watch for any resource (image, script, CSS, fetch, XHR) that takes
+      // longer than 1 000 ms to download. Also reports page load totals once
+      // the window load event fires.
+      try {
+        var slowThreshold = 1000; // ms
+        var resourceBatch = [];
+        var resourceFlushTimer;
+        function flushSlowResources() {
+          if (!resourceBatch.length) return;
+          var batch = resourceBatch.splice(0);
+          enqueue('slow_resources', { resources: batch });
+          flush();
+        }
+        new PerformanceObserver(function (list) {
+          list.getEntries().forEach(function (entry) {
+            var duration = Math.round(entry.duration);
+            if (duration >= slowThreshold) {
+              resourceBatch.push({
+                name: (entry.name || '').slice(0, 200),
+                type: entry.initiatorType || 'other',
+                duration: duration,
+                size: Math.round(entry.transferSize || 0),
+                cached: entry.transferSize === 0 && entry.decodedBodySize > 0,
+              });
+              clearTimeout(resourceFlushTimer);
+              resourceFlushTimer = setTimeout(flushSlowResources, 2000);
+            }
+          });
+        }).observe({ type: 'resource', buffered: true });
+      } catch (_) {}
+
+      // ── Page load timing ─────────────────────────────────────────────────
+      // Captured once after the load event so navigation timing is complete.
+      function reportPageLoad() {
+        try {
+          var timing = null;
+          if (w.performance && w.performance.getEntriesByType) {
+            var nav = w.performance.getEntriesByType('navigation')[0];
+            if (nav) {
+              timing = {
+                ttfb:              Math.round(nav.responseStart - nav.requestStart),
+                dom_interactive:   Math.round(nav.domInteractive),
+                dom_complete:      Math.round(nav.domComplete),
+                load_event:        Math.round(nav.loadEventEnd),
+                transfer_size:     Math.round(nav.transferSize || 0),
+                decoded_size:      Math.round(nav.decodedBodySize || 0),
+                redirect_count:    nav.redirectCount || 0,
+              };
+            }
+          } else if (w.performance && w.performance.timing) {
+            var t = w.performance.timing;
+            var origin = t.navigationStart || 0;
+            timing = {
+              ttfb:            t.responseStart - t.requestStart,
+              dom_interactive: t.domInteractive - origin,
+              dom_complete:    t.domComplete - origin,
+              load_event:      t.loadEventEnd - origin,
+            };
+          }
+          if (timing && timing.load_event > 0) {
+            enqueue('page_load', timing);
+            flush();
+          }
+        } catch (_) {}
+      }
+      if (d.readyState === 'complete') {
+        // Defer so the timing data is finalised
+        setTimeout(reportPageLoad, 0);
+      } else {
+        w.addEventListener('load', function () { setTimeout(reportPageLoad, 0); });
+      }
     }
 
     // SPA route changes
