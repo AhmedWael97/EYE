@@ -209,6 +209,23 @@
       scrollLastY = nowY;
     }, { passive: true });
 
+    // Short-page scroll-depth: if the page fits in the viewport, the user
+    // never scrolls, so fire all milestones immediately (matches behaviour
+    // of "the user saw 100% of the content").
+    function fireShortPageScrollDepth() {
+      var pageH = (d.documentElement && d.documentElement.scrollHeight) || 0;
+      if (pageH && pageH <= w.innerHeight + 50) {
+        var marks = [25, 50, 75, 100];
+        for (var i = 0; i < marks.length; i++) {
+          if (!scrollFired[marks[i]]) {
+            scrollFired[marks[i]] = 1;
+            enqueue('scroll_depth', { depth: marks[i] });
+          }
+        }
+      }
+    }
+    fireShortPageScrollDepth();
+
     // Time on page / visibility
     d.addEventListener('visibilitychange', function () {
       if (d.visibilityState === 'hidden') {
@@ -291,9 +308,21 @@
       var isNativeInteractive = tag === 'a' || tag === 'input' || tag === 'select' ||
         tag === 'textarea' || tag === 'button' || tag === 'label';
       if (w.MutationObserver && d.documentElement && !isNativeInteractive) {
+        // Scope observer to the click target's nearest structural ancestor
+        // (within 3 levels) to avoid false negatives from unrelated React /
+        // analytics / ad DOM churn elsewhere on the page.
+        var scope = null;
+        if (primaryTarget && primaryTarget.closest) {
+          scope = primaryTarget.closest('main, section, article, form, dialog, [role=main], [role=dialog]');
+        }
+        if (!scope) {
+          var hop = primaryTarget, n = 0;
+          while (hop && n < 3) { hop = hop.parentElement; n++; }
+          scope = hop || (primaryTarget && primaryTarget.parentElement) || d.body || d.documentElement;
+        }
         var changed = false;
         var obs = new MutationObserver(function () { changed = true; obs.disconnect(); });
-        obs.observe(d.documentElement, { childList: true, subtree: true, attributes: true });
+        obs.observe(scope, { childList: true, subtree: true, attributes: true, characterData: true });
         setTimeout(function () {
           obs.disconnect();
           if (!changed) {
@@ -336,9 +365,24 @@
     if (w.PerformanceObserver) {
       var v = { lcp: 0, cls: 0, inp: 0 };
       var vSent = false;
+      var rateMetric = function (val, good, poor) {
+        return val < good ? 'good' : val < poor ? 'needs-improvement' : 'poor';
+      };
+      var worstOf = function (ratings) {
+        var rank = { 'good': 0, 'needs-improvement': 1, 'poor': 2 };
+        var worst = 'good';
+        for (var i = 0; i < ratings.length; i++) {
+          if (rank[ratings[i]] > rank[worst]) worst = ratings[i];
+        }
+        return worst;
+      };
       var reportVitals = function () {
         if (vSent) return; vSent = true;
-        var r = v.lcp < 2500 && v.cls < 0.1 && v.inp < 200 ? 'good' : v.lcp < 4000 && v.cls < 0.25 && v.inp < 500 ? 'needs-improvement' : 'poor';
+        var r = worstOf([
+          rateMetric(v.lcp, 2500, 4000),
+          rateMetric(v.cls, 0.1, 0.25),
+          rateMetric(v.inp, 200, 500)
+        ]);
         enqueue('custom', { e: 'web_vitals', p: { lcp: v.lcp, cls: Math.round(v.cls * 1000) / 1000, inp: v.inp, rating: r } });
       };
       var tryObs = function (type, cb) {
