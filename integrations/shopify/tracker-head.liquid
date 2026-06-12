@@ -1,0 +1,15 @@
+{%- comment -%}
+  EYE Analytics — site-wide tracker.
+
+  WHERE: Online Store → Themes → Edit code → layout/theme.liquid
+  PASTE: just before the closing </head> tag.
+
+  Replace the two placeholders below:
+    __EYE_API_URL__  → your EYE backend/API URL (no trailing slash),
+                       e.g. https://api.your-eye-domain.com
+    __EYE_TOKEN__    → the data-token from your EYE domain settings
+{%- endcomment -%}
+<script async
+        src="__EYE_API_URL__/tracker/eye.js"
+        data-token="__EYE_TOKEN__"
+        data-api="__EYE_API_URL__/api/track"></script>

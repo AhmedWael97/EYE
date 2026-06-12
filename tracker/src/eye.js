@@ -526,8 +526,36 @@
       if (typeof name !== 'string' || !name || name.length > 64) return;
       enqueue('custom', { e: name, p: props || {} });
     },
+    // Record a sale so it can be attributed to the campaign that brought the
+    // visitor. Call this on the order-confirmation page, e.g.
+    //   EYE.purchase(199.0, 'USD', 'ORDER-1234')
+    purchase: function (value, currency, orderId, props) {
+      var p = (props && typeof props === 'object') ? props : {};
+      p.value = (typeof value === 'number') ? value : (parseFloat(value) || 0);
+      if (currency) p.currency = String(currency).slice(0, 8);
+      if (orderId) p.order_id = String(orderId).slice(0, 64);
+      enqueue('custom', { e: 'purchase', p: p });
+    },
     identify: function (externalId, traits) {
       enqueue('identify', { eid: externalId, p: traits || {} });
+    },
+    // Record that this visitor was exposed to a given experiment variant.
+    //   EYE.experiment('homepage_cta', 'variant_b')
+    experiment: function (key, variant) {
+      if (typeof key !== 'string' || !key) return;
+      enqueue('custom', { e: 'experiment', p: { exp: String(key).slice(0, 64), variant: String(variant).slice(0, 64) } });
+    },
+    // Deterministically bucket this visitor into one of `variants` (stable across
+    // visits, by hashing the visitor id), record the exposure, and return it.
+    //   var v = EYE.ab('homepage_cta', ['control', 'variant_b']);
+    ab: function (key, variants) {
+      if (typeof key !== 'string' || !key || !variants || !variants.length) return null;
+      var id = (vid || load('_eye_vid') || '') + ':' + key;
+      var h = 0;
+      for (var i = 0; i < id.length; i++) { h = ((h << 5) - h + id.charCodeAt(i)) | 0; }
+      var variant = variants[Math.abs(h) % variants.length];
+      this.experiment(key, variant);
+      return variant;
     },
     optout: function () {
       setCookie('_eye_optout', '1', 365);
@@ -543,5 +571,34 @@
 
   // Backwards compat alias
   w.eye = w.EYE;
+
+  // ── Optional: session replay (rrweb) ───────────────────────────────────────
+  // Enabled by adding data-replay="true" to the script tag. The heavier replay
+  // bundle is lazy-loaded so the core tracker stays tiny. It reads the visitor /
+  // session IDs and token from this same tag and streams to /api/track/replay.
+  (function loadReplay() {
+    var want = el && (el.getAttribute('data-replay') === 'true' || el.getAttribute('data-replay') === '1');
+    if (!want) return;
+    if (getCookie('_eye_optout') || getCookie('_eye_exclude')) return; // respect privacy choices
+    try {
+      var replaySrc;
+      if (el.src && el.src.indexOf('eye.js') !== -1) {
+        // Sibling of eye.js, e.g. https://api.example.com/tracker/eye-replay.js
+        replaySrc = el.src.replace(/eye\.js(\?.*)?$/, 'eye-replay.js');
+      } else {
+        // Fallback: derive from the API origin → <origin>/tracker/eye-replay.js
+        var a = d.createElement('a');
+        a.href = API;
+        replaySrc = a.protocol + '//' + a.host + '/tracker/eye-replay.js';
+      }
+      var rs = d.createElement('script');
+      rs.async = true;
+      rs.src = replaySrc;
+      // Propagate config so eye-replay.js finds it even if loaded cross-origin.
+      rs.setAttribute('data-token', TOKEN);
+      rs.setAttribute('data-api', API);
+      (d.head || d.documentElement).appendChild(rs);
+    } catch (_) {}
+  }());
 
 }(window, document, navigator));

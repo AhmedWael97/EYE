@@ -1,0 +1,41 @@
+{%- comment -%}
+  EYE Analytics — purchase tracking on the order status ("thank you") page.
+
+  WHERE: Settings → Checkout → Order status page → Additional scripts
+  PASTE: the whole block below.
+
+  Replace the two placeholders:
+    __EYE_API_URL__  → your EYE backend/API URL (no trailing slash)
+    __EYE_TOKEN__    → the data-token from your EYE domain settings
+
+  `first_time_accessed` is true only on the customer's first view of the page,
+  so a refresh won't re-send the sale. EYE also de-dupes by order number
+  server-side as a backstop.
+
+  The order status page lives on the same domain as your storefront, so the
+  EYE visitor cookie persists here — that's what makes cross-session,
+  last-touch campaign attribution work.
+{%- endcomment -%}
+{% if first_time_accessed %}
+  <script async
+          src="__EYE_API_URL__/tracker/eye.js"
+          data-token="__EYE_TOKEN__"
+          data-api="__EYE_API_URL__/api/track"></script>
+  <script>
+    (function () {
+      // total_price is an integer in the currency's subunit (e.g. cents).
+      var ORDER    = {{ order.order_number | json }};
+      var VALUE    = {{ checkout.total_price | json }} / 100;
+      var CURRENCY = {{ checkout.currency | json }};
+
+      var tries = 0;
+      (function fire() {
+        if (window.EYE && typeof window.EYE.purchase === 'function') {
+          window.EYE.purchase(VALUE, CURRENCY, String(ORDER));
+        } else if (tries++ < 50) {
+          setTimeout(fire, 200); // wait up to ~10s for the async tracker
+        }
+      })();
+    })();
+  </script>
+{% endif %}

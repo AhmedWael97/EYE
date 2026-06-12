@@ -324,6 +324,11 @@ Tables: `events`, `sessions`, `pipeline_events`, `ux_events`,
 | May 2026 | SEO Checker only checked one page | Added `seo-crawl` endpoint + BFS crawler |
 | May 2026 | No asset load-time tracking | Added `page_load` + `slow_resources` events |
 | May 2026 | No Paymob payment option | Added `PaymobController`, migration, billing UI |
+| Jun 2026 | UTM params never stored (tracker sent `us/um/uc`, job read `utm_source`) — campaigns merged | `ProcessTrackingEvent` now reads the short keys |
+| Jun 2026 | No sales/revenue per campaign | `EYE.purchase()` + `conversions` table + last-touch ASOF attribution in `CampaignsController` |
+| Jun 2026 | No ROI on campaigns | `ad_spend` table + `AdSpendController` (manual/CSV) → ROAS/CPA columns |
+| Jun 2026 | Session replay never recorded (eye.js never loaded eye-replay.js) | `data-replay="true"` loader added to `eye.js` |
+| Jun 2026 | Alert rules never evaluated (CheckAlertRulesJob was never scheduled) | Added `eye:check-alerts` command + 15-min schedule; alerts UI now creates type-based rules the job understands |
 | Pre-May 2026 | Session replay blackscreen | See `FIXES_INSTRUCTIONS.md` → Fix 1 |
 
 ---
@@ -358,5 +363,36 @@ cd tracker && node build.js
 ## 14. Phase 2 (Not Yet Implemented)
 - Website visitor chatbot (AI-powered live chat on client sites)  
 - AI assistant chatbot in dashboard  
-- Replay events written to ClickHouse (table exists, ingestion disabled)  
 - AI credits buying flow (beyond Paymob subscription)  
+- Ad-spend API connectors (Google Ads / Meta) — manual + CSV import already shipped  
+
+## 15. Revenue, Campaigns & Integrations (Jun 2026)
+- **Sales tracking**: `EYE.purchase(value, currency, orderId)` (also `order_completed` /
+  `checkout_complete` custom events) → `conversions` ClickHouse table (ReplacingMergeTree,
+  dedup by `order_id`). Attributed last-touch / cross-session via ASOF JOIN.
+- **Ad spend / ROAS**: PostgreSQL `ad_spend` table; CRUD + CSV import at
+  `/analytics/{domainId}/ad-spend`. Campaigns dashboard shows Revenue, Orders, Spend, ROAS, CPA.
+- **E-commerce integrations** (in `integrations/`): WooCommerce plugin (auto-fires
+  `EYE.purchase` on `woocommerce_thankyou`) and Shopify snippets (theme + order-status, with a
+  Web Pixel fallback).
+- **Session replay**: ENABLED. Add `data-replay="true"` to the tracker snippet — `eye.js`
+  lazy-loads `eye-replay.js` (rrweb). Pipeline: `ReplayIngestController` → `replay_events` +
+  `session_replays`; player at dashboard `replay/`. Respects `eye-block` / `eye-mask` classes.
+  - **Timeline markers**: player overlays notable `ux_events` (rage/dead click, JS error, …)
+    via `GET /replay/{domainId}/sessions/{sessionId}/markers` (approx. positioning — server vs client clock).
+  - **Funnel → replay**: funnels page links each step to `GET /replay/{domainId}/funnel-drops`
+    (`?pipeline_id=&step_order=`) to watch sessions that dropped after that step.
+- **Attribution models**: Campaigns endpoint accepts `?attribution=last_touch|first_touch|linear|time_decay`
+  (default last_touch). Computed in PHP (`CampaignsController::credit()`); orders/revenue split fractionally for multi-touch.
+- **Alerts & anomaly detection**: `eye:check-alerts` (scheduled every 15 min) dispatches
+  `CheckAlertRulesJob` per domain. Rule types: `traffic_drop`, `traffic_anomaly` (z-score vs 14-day
+  same-hour baseline), `error_spike`, `conversion_drop`, `quota_warning`. Per-rule 6h cooldown
+  (Redis `eye:alert:cooldown:{id}`). Managed at settings `alerts/`.
+  - **Slack / Discord delivery**: rule `channel` can be `slack`|`discord` with a `webhook_url`
+    (migration `..._add_webhook_url_to_alert_rules`); the job POSTs directly to the webhook.
+- **Cohort retention**: `RetentionController` → `GET /analytics/{domainId}/retention?period=week|month`.
+  Cohort grid (visitors by first-visit period × return offset). Dashboard `retention/`.
+- **A/B experiments**: `experiments` table (PostgreSQL) + `ExperimentController`. Exposures recorded
+  client-side via `EYE.experiment(key, variant)` / `EYE.ab(key, variants)` (deterministic visitor
+  hashing) as a `experiment` custom event — no ingestion change. Results join exposed visitors to
+  `conversions` for revenue-aware comparison + two-proportion z-test (95% = |z|≥1.96). Dashboard `experiments/`.
