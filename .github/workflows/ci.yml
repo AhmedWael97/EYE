@@ -129,13 +129,15 @@ jobs:
         working-directory: tracker
         run: npm run build
 
-      - name: Check bundle size (< 4KB gzipped)
+      - name: Check bundle size (< 5KB gzipped)
         working-directory: tracker
         run: |
           SIZE=$(gzip -c dist/eye.min.js | wc -c)
           echo "eye.min.js gzipped: ${SIZE} bytes"
-          if [ "$SIZE" -gt 4096 ]; then
-            echo "ERROR: tracker bundle exceeds 4KB gzipped limit (${SIZE} bytes)"
+          # Core tracker now bundles revenue (purchase), A/B (experiment/ab) and the
+          # data-replay loader — budget raised from 4KB to 5KB to fit them.
+          if [ "$SIZE" -gt 5120 ]; then
+            echo "ERROR: tracker bundle exceeds 5KB gzipped limit (${SIZE} bytes)"
             exit 1
           fi
 

@@ -73,7 +73,7 @@ eye/
 │   │   └── store/auth.ts         – Zustand auth store (token, selectedDomainId)
 │
 ├── tracker/
-│   ├── src/eye.js               – source tracker (< 4 KB gzipped target)
+│   ├── src/eye.js               – source tracker (< 5 KB gzipped budget; CI-enforced)
 │   └── src/eye-replay.js        – rrweb session-replay loader
 │
 └── docker/
@@ -396,3 +396,17 @@ cd tracker && node build.js
   client-side via `EYE.experiment(key, variant)` / `EYE.ab(key, variants)` (deterministic visitor
   hashing) as a `experiment` custom event — no ingestion change. Results join exposed visitors to
   `conversions` for revenue-aware comparison + two-proportion z-test (95% = |z|≥1.96). Dashboard `experiments/`.
+
+## 16. Multi-site Manager Tools (Jun 2026)
+For users running many domains — aggregation, prioritization, action.
+- **Portfolio**: `PortfolioController` — `GET /portfolio/overview` (per-domain KPI table + deltas vs prior
+  period; user-scoped, spans all the user's domains) and `GET /portfolio/triage` (ranked cross-site
+  issues: low ROAS, revenue/traffic drops, error spikes, missing spend data — sorted by money at stake).
+  Dashboard `portfolio/` (lead item in the Analytics hub). Clicking a row/issue sets `selectedDomainId`
+  and deep-links to that site's relevant page.
+- **Budget recommendations**: client-side, derived from the campaigns endpoint's per-row spend/revenue/ROAS
+  (pause ROAS<1, scale ROAS≥3, flag missing spend). Card on the campaigns page. Deterministic + explainable.
+- **Bulk alert defaults**: `POST /alert-rules/apply-defaults` creates traffic_anomaly + conversion_drop +
+  error_spike rules for every domain that lacks them. Button on settings `alerts/`.
+- **Branded portfolio report**: `portfolio/report/` — print-optimized (window.print → PDF) report with totals,
+  priorities, and a per-site table. App chrome hides on print (`print:hidden` in the app layout).

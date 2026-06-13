@@ -1,6 +1,6 @@
 /*!
  * EYE Analytics Tracker v1.0.0
- * Lightweight visitor tracking snippet — target < 4 KB gzipped
+ * Lightweight visitor tracking snippet — target < 5 KB gzipped
  */
 /* jshint esversion:6 */
 (function (w, d, n) {
