@@ -269,6 +269,16 @@ The webhook URL is public (`/api/v1/billing/paymob/webhook`) and guarded exclusi
 by HMAC-SHA512 signature verification over Paymob's documented field set.
 Do NOT add Sanctum auth to this route.
 
+### Environments + super-admin keys (Jun 2026)
+- **Only two gateways**: Paymob + Bank Transfer (`AdminPaymentMethodController` validation restricts
+  `type` to `paymob,bank_transfer`; admin Payment Methods page shows only these; billing returns active only).
+- **Test/Production modes**: keys are managed in the super-admin Payment Methods page. `payment_methods.config`
+  shape: `{ mode: 'test'|'production', test: {api_key, secret_key, public_key, integration_id, iframe_id, hmac_secret, base_url?}, production: {…} }`.
+- `PaymobController::resolvePaymobConfig()` picks the active-mode keys → flat/legacy DB config → `PAYMOB_*` env.
+  Base URL is per-mode overridable (default `https://accept.paymob.com/api`); iframe URL is derived from it.
+- **Super-admin sidebar fix**: desktop visibility bug was `[dir=ltr] .ltr:-translate-x-full` out-specifying
+  `lg:translate-x-0`; fixed with `lg:!translate-x-0` in `(admin)/layout.tsx`.
+
 ---
 
 ## 10. Database Quick Reference
