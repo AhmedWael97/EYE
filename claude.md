@@ -396,6 +396,11 @@ cd tracker && node build.js
   client-side via `EYE.experiment(key, variant)` / `EYE.ab(key, variants)` (deterministic visitor
   hashing) as a `experiment` custom event — no ingestion change. Results join exposed visitors to
   `conversions` for revenue-aware comparison + two-proportion z-test (95% = |z|≥1.96). Dashboard `experiments/`.
+  - **GrowthBook integration** (rigorous engine): `GrowthBookService` + `ExperimentController::growthbook*`
+    pull experiments/results from the GrowthBook REST API (`config/services.php → growthbook`,
+    env `GROWTHBOOK_API_HOST`/`GROWTHBOOK_API_KEY`) and overlay EYE revenue-per-variant (matched on
+    `trackingKey` to our exposure events). Degrades gracefully when unconfigured. Setup:
+    `integrations/growthbook/README.md`. GrowthBook does assignment + stats; EYE adds revenue.
 
 ## 16. Multi-site Manager Tools (Jun 2026)
 For users running many domains — aggregation, prioritization, action.
@@ -410,3 +415,11 @@ For users running many domains — aggregation, prioritization, action.
   error_spike rules for every domain that lacks them. Button on settings `alerts/`.
 - **Branded portfolio report**: `portfolio/report/` — print-optimized (window.print → PDF) report with totals,
   priorities, and a per-site table. App chrome hides on print (`print:hidden` in the app layout).
+
+## 17. Help Center (Jun 2026)
+Public, bilingual (EN/AR, RTL-aware) end-user guide — distinct from the flat `/docs` overview.
+- **Content**: `frontend/src/content/help.ts` — pure data: 9 categories × step-by-step articles, each with
+  `{en,ar}` title/summary/where/steps/tips. Add articles here; the page auto-renders them.
+- **Page**: `(marketing)/help/` — `page.tsx` (server, metadata) + `HelpClient.tsx` (client: search filter,
+  sidebar topic nav, per-article numbered steps). Reached via marketing Navbar "Guide" (`landing.nav.guide`)
+  and a cross-link on `/docs`.
