@@ -433,3 +433,11 @@ Public, bilingual (EN/AR, RTL-aware) end-user guide — distinct from the flat `
 - **Page**: `(marketing)/help/` — `page.tsx` (server, metadata) + `HelpClient.tsx` (client: search filter,
   sidebar topic nav, per-article numbered steps). Reached via marketing Navbar "Guide" (`landing.nav.guide`)
   and a cross-link on `/docs`.
+
+## 18. Self-tracking (dogfooding, Jun 2026)
+EYE tracks its own frontend. A head loader in `[locale]/layout.tsx` sets `window.EYE_TOKEN`/`EYE_API`
+and injects `eye.js` + `eye-replay.js` from `EYE_HOST` (env-overridable: `NEXT_PUBLIC_EYE_HOST/TOKEN/API`,
+default `https://eye-analsyis.live`, api `/api/collect`). Skips localhost so dev doesn't pollute prod.
+Loaded once each (no `data-replay` attr → no double-record). Logged-in users are identified via
+`components/EyeIdentify.tsx` (rendered in `Providers`) → `EYE.identify(email, {user_id,name,email,role})`,
+so they appear under Known Visitors / Identities.
