@@ -441,3 +441,19 @@ default `https://eye-analsyis.live`, api `/api/collect`). Skips localhost so dev
 Loaded once each (no `data-replay` attr → no double-record). Logged-in users are identified via
 `components/EyeIdentify.tsx` (rendered in `Providers`) → `EYE.identify(email, {user_id,name,email,role})`,
 so they appear under Known Visitors / Identities.
+
+## 19. SEO (Jun 2026)
+Marketing site (Next.js App Router) optimized for organic search.
+- **Single source of truth**: `src/lib/seo.ts` exports `SITE_URL` (env `NEXT_PUBLIC_APP_URL`, default
+  `https://eye-analsyis.live`), `SITE_NAME`, `TWITTER_HANDLE`, `DEFAULT_KEYWORDS`, and JSON-LD builders.
+  Fixed the old `eye.ai` fallback that leaked into canonical/sitemap/robots.
+- **Structured data (JSON-LD)**: `components/JsonLd.tsx` renders blocks; landing injects Organization +
+  WebSite + SoftwareApplication. Builders also exist for FAQPage / BreadcrumbList.
+- **Metadata**: `[locale]/layout.tsx` `generateMetadata` sets metadataBase, locale-aware OG/Twitter defaults,
+  keywords, robots (`max-image-preview:large`, `max-snippet:-1`). Landing + pricing have per-page
+  title/description + `alternates` (canonical + en/ar hreflang). Pricing metadata lives in
+  `[locale]/pricing/layout.tsx` (the page is a client component).
+- **OG images**: dynamic `app/[locale]/opengraph-image.tsx` (next/og ImageResponse) + `twitter-image.tsx`
+  re-export — branded card for every marketing page, no static asset.
+- **robots** (`app/robots.ts`): allows public, disallows `/{en,ar}/{dashboard,admin,settings,auth}` + `/api/`,
+  points to sitemap, sets host. **sitemap** (`app/sitemap.ts`): `/`, `/pricing`, `/docs`, `/help` × en/ar with hreflang.
