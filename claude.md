@@ -27,7 +27,7 @@ Paid plans are processed through Paymob (primary) and manual bank transfer.
 | Error Monitor | Sentry (backend + frontend) |
 | Email | Laravel Mail — driver configurable via `MAIL_MAILER` (Mailgun recommended) |
 | Tests | PHPUnit/Pest · Jest · Playwright (E2E) |
-| CI/CD | GitHub Actions → SSH deploy to VPS |
+| CI/CD | `scripts/deploy.sh` on the VPS (Actions-free); trigger via `scripts/remote-deploy.sh` or `git push` hook (`scripts/post-receive`). See `DEPLOY.md`. GitHub Actions optional via self-hosted runner. |
 | Deployment | Docker Compose (`docker-compose.yml` dev, `docker-compose.prod.yml` prod) |
 
 ---

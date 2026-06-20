@@ -1,5 +1,6 @@
 # ─── Environment files ────────────────────────────────────────────────────────
 .env
+scripts/.deploy.env
 .env.local
 .env.staging
 .env.production

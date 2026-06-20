@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Optional "git push to deploy" hook.
+# Install ON THE SERVER, in the existing repo checkout:
+#
+#   git config receive.denyCurrentBranch updateInstead
+#   cp scripts/post-receive .git/hooks/post-receive
+#   chmod +x .git/hooks/post-receive
+#
+# Then from your machine:
+#   git remote add production ssh://USER@HOST:PORT/srv/eye   # path to the checkout
+#   git push production main
+#
+# Pushing to main updates the working tree in place, then this hook runs the
+# same deploy as scripts/deploy.sh.
+set -euo pipefail
+
+while read -r _old _new ref; do
+  if [ "$ref" = "refs/heads/main" ]; then
+    unset GIT_DIR GIT_WORK_TREE
+    cd "$(git rev-parse --show-toplevel)"
+    echo "==> Push to main received — deploying..."
+    bash scripts/deploy.sh
+  fi
+done
