@@ -457,3 +457,34 @@ Marketing site (Next.js App Router) optimized for organic search.
   re-export — branded card for every marketing page, no static asset.
 - **robots** (`app/robots.ts`): allows public, disallows `/{en,ar}/{dashboard,admin,settings,auth}` + `/api/`,
   points to sitemap, sets host. **sitemap** (`app/sitemap.ts`): `/`, `/pricing`, `/docs`, `/help` × en/ar with hreflang.
+
+## 20. Replay quality, A/B Studio, Channel Mix, Paymob test (Jun 2026)
+- **Criteria-based replay**: `eye-replay.js` records into a buffer but only UPLOADS once the session
+  *qualifies* — a friction/intent signal (`eye.js` calls `window.__eyeReplayQualify(reason)` for
+  rage/dead click, js_error, form_abandon, quick_back, broken_link, purchase) OR engagement (≥10s + ≥3
+  interactions). Buffer is kept from the latest FullSnapshot so the first upload is playable.
+  `ReplayIngestController` sets `session_replays.has_snapshot` + `reason` + `status='complete'`;
+  `ReplayController::sessions` lists only `has_snapshot=true` (never broken; also hides legacy ones).
+  Player shows a reason badge. Migration `..._add_quality_to_session_replays`.
+- **A/B Studio**: separate `(studio)` route group (own chrome, shared token + `selectedDomainId`,
+  back-to-dashboard); the sidebar "Experiments" link now points to `/studio/experiments`, which re-exports
+  the experiments page. **Convert.com** integrated like GrowthBook: `ConvertService` +
+  `ExperimentController::convert*` + routes + a `ConvertPanel` (+ EYE revenue overlay) +
+  `integrations/convert/README.md`. Config `services.convert.*` (`CONVERT_ACCOUNT_ID/APPLICATION_ID/API_KEY`).
+- **Channel Mix (v2 4a)**: `dashboard/channels/` aggregates the campaigns endpoint by medium → per-channel
+  sessions/revenue/spend/ROAS + cross-channel budget suggestions. Frontend-only (reuses campaigns data).
+- **Paymob hardening**: `resolvePaymobConfig()` trims + reports `missing[]` (blank `integration_id` no longer
+  becomes 0); admin **Test connection** endpoint `POST /admin/payment-methods/paymob/test` verifies the saved
+  active-mode keys against Paymob's auth API; admin card auto-enables on save + shows the result.
+
+## 21. v2 analysis + Growth engine (Jun 2026)
+- **Channel Mix (4a)**: `dashboard/channels/` — campaigns data aggregated by medium → per-channel spend/revenue/ROAS + budget suggestions (frontend-only).
+- **LTV by source (4b)**: `LtvController` → `GET /analytics/{id}/ltv` — first-touch source per visitor × total conversion revenue → avg LTV/visitor. Reuses the shared `Concerns\ClassifiesTraffic` trait (same source/medium SQL as CampaignsController). Page `dashboard/ltv/`.
+- **Portfolio benchmarks (4c)**: portfolio page flags sites well below the portfolio **median** on conversion/ROAS/bounce (frontend-only on the overview data).
+- **SEO rank tracking (4d)**: `seo_keywords` + `seo_rankings` tables, `SeoRankController` (track keyword, CSV import `date,keyword,position,url`, trend), page `tools/seo-rank/`. Manual/CSV now; automated SERP API can POST into `import` later.
+- **Growth engine (compliant)**: `leads` + `email_suppressions` + `outreach_emails` tables.
+  `LeadController` (CRUD, CSV import, **warm leads** = companies that visited the user's domains via ClickHouse
+  `events.ip_hash` ⋈ `company_enrichments`). `OutreachController`: `draft` (AnthropicService writes an email for
+  review), `send` (suppression check + per-user **daily cap** + auto **unsubscribe** link, via Mailgun/Mail),
+  public `outreach/unsubscribe/{token}` + `outreach/mailgun-webhook` (bounce/complaint → suppression). Dashboard
+  `leads/`. No auto-send — drafts are reviewed; opt-outs/bounces suppressed globally.

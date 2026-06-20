@@ -100,8 +100,14 @@
       }
     }
     queue.push(ev);
+    // Tell the replay recorder this session is worth keeping (friction/intent).
+    if (w.__eyeReplayQualify) {
+      var rr = (type === 'custom' && extra && extra.e) ? extra.e : type;
+      if (REPLAY_REASONS[rr]) { try { w.__eyeReplayQualify(rr); } catch (_) {} }
+    }
     if (queue.length >= 10) { clearInterval(flushTimer); flush(); flushTimer = setInterval(flush, 4000); }
   }
+  var REPLAY_REASONS = { rage_click: 1, dead_click: 1, js_error: 1, form_abandon: 1, quick_back: 1, broken_link: 1, purchase: 1 };
 
   function startFlushTimer() {
     flushTimer = setInterval(flush, 4000);

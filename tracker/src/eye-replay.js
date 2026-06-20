@@ -37,66 +37,68 @@ import { record } from 'rrweb';
   function getSid() { return w._eyeSid || (function () { try { return localStorage.getItem('_eye_sid') || ''; } catch (_) { return ''; } }()); }
   function hasIds() { return !!getVid() && !!getSid(); }
 
-  // ── Event buffer ──────────────────────────────────────────────────────────
+  // ── Event buffer + qualification ──────────────────────────────────────────
+  // We record continuously but only UPLOAD once the session "qualifies":
+  //   • a friction/intent signal fired (rage/dead click, JS error, purchase…),
+  //     reported by eye.js via window.__eyeReplayQualify(reason), OR
+  //   • real engagement (≥ENGAGE_MS active AND ≥ENGAGE_INTERACTIONS clicks/inputs).
+  // Until qualified we keep only events from the latest FullSnapshot, so the
+  // first upload is always playable. This stops storing useless bounce
+  // recordings and never produces broken (snapshot-less) ones.
   var buf = [];
+  var qualified = false;
+  var reason = null;
+  var lastMeta = null;           // most recent rrweb Meta (type 4) — viewport
+  var interactions = 0;
+  var startTs = Date.now();
+  var ENGAGE_MS = 10000;
+  var ENGAGE_INTERACTIONS = 3;
 
   function flush() {
-    if (!buf.length) return;
-    if (!hasIds()) return;
+    if (!qualified) return;      // never upload an unqualified session
+    if (!buf.length || !hasIds()) return;
 
-    var sid = getSid();
-    var vid = getVid();
     var batch = buf.splice(0);
     var payload = JSON.stringify({
-      t:      TOKEN,
-      vid:    vid,
-      sid:    sid,
-      events: batch,
+      t: TOKEN, vid: getVid(), sid: getSid(), reason: reason || 'engaged', events: batch,
     });
-
     var url = API + '/replay';
 
-    // sendBeacon sends a text/plain POST — no CORS preflight is triggered,
-    // making it the most reliable cross-origin transport for analytics data.
-    // The backend's Content-Type check must accept text/plain (or be flexible).
     if (w.navigator && w.navigator.sendBeacon) {
       try {
-        // Wrap JSON in a Blob with text/plain to stay within the CORS
-        // "simple request" category (no OPTIONS preflight).
         var blob = new Blob([payload], { type: 'text/plain' });
         if (w.navigator.sendBeacon(url, blob)) return;
       } catch (_) {}
     }
-
-    // Fallback 1: fetch with keepalive (fires even on page unload, no preflight
-    // concern here because the server already sent Access-Control-Allow-Origin:*)
     try {
       if (w.fetch) {
-        var useKeepalive = payload.length < 60000;
         fetch(url, {
-          method:      'POST',
-          headers:     { 'Content-Type': 'application/json' },
-          body:        payload,
-          keepalive:   useKeepalive,
-          credentials: 'omit',
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: payload, keepalive: payload.length < 60000, credentials: 'omit',
         }).catch(function () {
-          // Fallback 2: plain XHR
-          try {
-            var x = new XMLHttpRequest();
-            x.open('POST', url, true);
-            x.setRequestHeader('Content-Type', 'application/json');
-            x.send(payload);
-          } catch (_) {}
+          try { var x = new XMLHttpRequest(); x.open('POST', url, true); x.setRequestHeader('Content-Type', 'application/json'); x.send(payload); } catch (_) {}
         });
       } else {
-        var x = new XMLHttpRequest();
-        x.open('POST', url, true);
-        x.setRequestHeader('Content-Type', 'application/json');
-        x.send(payload);
+        var x = new XMLHttpRequest(); x.open('POST', url, true); x.setRequestHeader('Content-Type', 'application/json'); x.send(payload);
       }
     } catch (_) {
       Array.prototype.unshift.apply(buf, batch);
     }
+  }
+
+  // Mark this session worth keeping. First reason wins. Flushes the retained
+  // buffer (which starts with a FullSnapshot, so playback is correct).
+  function qualify(r) {
+    if (qualified) return;
+    qualified = true;
+    reason = r || 'engaged';
+    flush();
+  }
+  w.__eyeReplayQualify = qualify;
+
+  function resetSession() {
+    if (qualified) flush();
+    buf = []; qualified = false; reason = null; lastMeta = null; interactions = 0; startTs = Date.now();
   }
 
   // ── Start rrweb recording ─────────────────────────────────────────────────
@@ -108,17 +110,26 @@ import { record } from 'rrweb';
 
     record({
       emit: function (event) {
-        buf.push(event);
+        if (event.type === 4) lastMeta = event;
 
-        // Flush the buffer immediately after a FullSnapshot (type 2).
-        // The preceding Meta event (type 4) is already in buf at this point
-        // because rrweb emits Meta → FullSnapshot consecutively, so both
-        // land in the same HTTP batch in the correct order — eliminating the
-        // race condition that occurred when they were flushed separately.
-        if (event.type === 2) {
-          flush();
-        } else if (buf.length >= 50) {
-          flush();
+        if (!qualified) {
+          if (event.type === 2) {
+            // New FullSnapshot — restart the buffer here (drop older idle events)
+            buf = (lastMeta && lastMeta !== event) ? [lastMeta, event] : [event];
+          } else {
+            buf.push(event);
+          }
+        } else {
+          buf.push(event);
+          if (event.type === 2 || buf.length >= 50) flush();
+        }
+
+        // Engagement: meaningful interaction = MouseInteraction(2) or Input(5)
+        if (event.type === 3 && event.data && (event.data.source === 2 || event.data.source === 5)) {
+          interactions++;
+          if (!qualified && interactions >= ENGAGE_INTERACTIONS && (Date.now() - startTs) >= ENGAGE_MS) {
+            qualify('engaged');
+          }
         }
       },
       checkoutEveryNms: 30000,        // Full DOM snapshot every 30 s (enables seeking)
@@ -126,26 +137,23 @@ import { record } from 'rrweb';
       inlineStylesheet: true,
       blockClass:       'eye-block',
       maskTextClass:    'eye-mask',
-
-      // Prefer reliability over fragile canvas/iframe capture in v1.
       recordCanvas: false,
       recordCrossOriginIframes: false,
       collectFonts: true
     });
   }
 
-  // Flush every 3 s and on page unload.
-  var flushInterval = setInterval(flush, 3000);
+  // Flush every 3 s (only sends once qualified) and on page unload.
+  setInterval(flush, 3000);
   w.addEventListener('pagehide',     flush);
   w.addEventListener('beforeunload', flush);
 
-  // When eye.js rotates the session ID on SPA navigation, flush the current
-  // buffer first so events stay associated with the correct session.
+  // When eye.js rotates the session ID on SPA navigation, finalize + reset.
   var lastSid = getSid();
   setInterval(function () {
     var cur = getSid();
     if (cur !== lastSid) {
-      flush();
+      resetSession();
       lastSid = cur;
     }
   }, 500);
