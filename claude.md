@@ -402,10 +402,28 @@ cd tracker && node build.js
     (migration `..._add_webhook_url_to_alert_rules`); the job POSTs directly to the webhook.
 - **Cohort retention**: `RetentionController` → `GET /analytics/{domainId}/retention?period=week|month`.
   Cohort grid (visitors by first-visit period × return offset). Dashboard `retention/`.
-- **A/B experiments**: `experiments` table (PostgreSQL) + `ExperimentController`. Exposures recorded
-  client-side via `EYE.experiment(key, variant)` / `EYE.ab(key, variants)` (deterministic visitor
-  hashing) as a `experiment` custom event — no ingestion change. Results join exposed visitors to
-  `conversions` for revenue-aware comparison + two-proportion z-test (95% = |z|≥1.96). Dashboard `experiments/`.
+- **A/B experiments (visual engine, rebuilt Jun 2026)**: real no-code visual testing — users do NOT write
+  `EYE.ab()` calls.
+  - **Two types**: `ab` (same page; each variation injects **CSS** and/or **JS**) and `split_url` (each
+    variation **redirects** to a different page URL). First variation = **control** (page as-is, no code).
+    Each variation has a **weight** (%); traffic split deterministically.
+  - **Schema**: `experiments` gains `type`, `target_url`, `goal_type` (`purchase`|`event`|`url`),
+    `goal_value`, `status` (`draft`|`running`|`paused`); new `experiment_variations` table
+    (`vkey`, `name`, `weight`, `is_control`, `js_code`, `css_code`, `redirect_url`, `sort`).
+    Migration `..._extend_experiments_for_visual_ab`. Models `Experiment` (hasMany `variations`) +
+    `ExperimentVariation`.
+  - **Tracker**: `eye.js` unconditionally lazy-loads **`eye-ab.js`** (~2.7 KB). It fetches
+    `GET /api/v1/experiments/active?t={TOKEN}` (PUBLIC, CORS `*`); for each running experiment whose
+    `target_url` path matches, it buckets the visitor by id-hash into a weighted variation (sticky via
+    `localStorage _eye_ab_{key}`), injects `<style data-eye-ab>` + `new Function(js)()` (ab) or
+    `location.replace(redirect_url)` (split_url), and records exposure as the existing `experiment`
+    custom event (`props.exp`, `props.variant`). No ingestion change.
+  - **Results** (`ExperimentController::results`): per-variation **visitors seen** (distinct exposed) +
+    **converters** by goal (`purchase`→`conversions`, `event`→`custom_events`, `url`→pageview url LIKE),
+    **conversion_rate**, **uplift** vs control, two-proportion z-test (95% = |z|≥1.96), revenue.
+    Dashboard `experiments/` (`ExperimentBuilder.tsx` with **CodeMirror** JS/CSS editors via
+    `@uiw/react-codemirror`; `CodeEditor.tsx` dynamic `ssr:false`) — build, set weights, Start/Pause/Edit/Delete,
+    per-variation results table. Legacy `EYE.experiment()`/`EYE.ab()` still record exposures (back-compat).
   - **GrowthBook integration** (rigorous engine): `GrowthBookService` + `ExperimentController::growthbook*`
     pull experiments/results from the GrowthBook REST API (`config/services.php → growthbook`,
     env `GROWTHBOOK_API_HOST`/`GROWTHBOOK_API_KEY`) and overlay EYE revenue-per-variant (matched on

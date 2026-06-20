@@ -607,4 +607,26 @@
     } catch (_) {}
   }());
 
+  // ── A/B experiments: lazy-load the apply engine (always — it self-checks for
+  // running experiments and does nothing if there are none). No extra snippet.
+  (function loadAb() {
+    if (getCookie('_eye_optout') || getCookie('_eye_exclude')) return;
+    try {
+      var abSrc;
+      if (el && el.src && el.src.indexOf('eye.js') !== -1) {
+        abSrc = el.src.replace(/eye\.js(\?.*)?$/, 'eye-ab.js');
+      } else {
+        var a = d.createElement('a');
+        a.href = API;
+        abSrc = a.protocol + '//' + a.host + '/tracker/eye-ab.js';
+      }
+      var as = d.createElement('script');
+      as.async = true;
+      as.src = abSrc;
+      as.setAttribute('data-token', TOKEN);
+      as.setAttribute('data-api', API);
+      (d.head || d.documentElement).appendChild(as);
+    } catch (_) {}
+  }());
+
 }(window, document, navigator));

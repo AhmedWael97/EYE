@@ -50,7 +50,25 @@ const replayPromise = esbuild.build({
   console.log(`Copied to backend/public/tracker/eye-replay.js`);
 });
 
-Promise.all([corePromise, replayPromise]).catch((err) => {
+// ── Build eye-ab.min.js (A/B apply engine, no deps, lazy-loaded) ─────────────
+const abOutfile = path.join(__dirname, 'dist', 'eye-ab.min.js');
+
+const abPromise = esbuild.build({
+  entryPoints: [path.join(__dirname, 'src', 'eye-ab.js')],
+  bundle: false,
+  minify: true,
+  target: ['es5'],
+  outfile: abOutfile,
+}).then(() => {
+  const stat = fs.statSync(abOutfile);
+  console.log(`Built eye-ab.min.js — ${(stat.size / 1024).toFixed(2)} KB`);
+  const publicDest = path.join(__dirname, '..', 'backend', 'public', 'tracker');
+  fs.mkdirSync(publicDest, { recursive: true });
+  fs.copyFileSync(abOutfile, path.join(publicDest, 'eye-ab.js'));
+  console.log(`Copied to backend/public/tracker/eye-ab.js`);
+});
+
+Promise.all([corePromise, replayPromise, abPromise]).catch((err) => {
   console.error(err);
   process.exit(1);
 });
