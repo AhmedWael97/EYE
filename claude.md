@@ -339,6 +339,8 @@ Tables: `events`, `sessions`, `pipeline_events`, `ux_events`,
 | Jun 2026 | No ROI on campaigns | `ad_spend` table + `AdSpendController` (manual/CSV) → ROAS/CPA columns |
 | Jun 2026 | Session replay never recorded (eye.js never loaded eye-replay.js) | `data-replay="true"` loader added to `eye.js` |
 | Jun 2026 | Alert rules never evaluated (CheckAlertRulesJob was never scheduled) | Added `eye:check-alerts` command + 15-min schedule; alerts UI now creates type-based rules the job understands |
+| Jun 2026 | Disabled bank transfer still shown to users | `BillingController::show()`/`subscribe()` called `getOrCreateBankTransferMethod()` which re-created an active row whenever none was active — disabling spawned a fresh active duplicate on next load. Removed the auto-create; both now look up an **active** method only (none → not offered). |
+| Jun 2026 | Paymob "not fully configured" 503 with valid super-admin keys | `resolvePaymobConfig()` now falls back to whichever environment (test/production) actually has complete keys when the selected mode is incomplete — fixes keys entered under the wrong environment toggle. Admin "Test connection" still reports the precise missing field/mode. |
 | Pre-May 2026 | Session replay blackscreen | See `FIXES_INSTRUCTIONS.md` → Fix 1 |
 
 ---
