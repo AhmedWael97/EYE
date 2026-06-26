@@ -511,3 +511,55 @@ Marketing site (Next.js App Router) optimized for organic search.
   review), `send` (suppression check + per-user **daily cap** + auto **unsubscribe** link, via Mailgun/Mail),
   public `outreach/unsubscribe/{token}` + `outreach/mailgun-webhook` (bounce/complaint → suppression). Dashboard
   `leads/`. No auto-send — drafts are reviewed; opt-outs/bounces suppressed globally.
+
+## 22. Agency / Organizations (multi-tenancy, Jun 2026)
+Marketing-agency tier: one **organization** (owner) with up to **10 member seats** and **5 client domains**,
+where the owner assigns each member specific domains.
+- **Plan**: `agency` (free per product decision; `is_public`), limits `{domains:5, team_members:10}`, white-label + `team_accounts`.
+  Created via `POST /organization` which also creates an `active` Subscription (no expiry) and adopts the owner's existing personal domains into the org.
+- **Schema** (`..._create_organizations_tables`): `organizations` (owner_user_id), `organization_members`
+  (role `owner|admin|member`, status), `organization_invitations` (email + token, 14-day), `domain_access`
+  (per-member domain grants); `domains.organization_id` (nullable — personal domains unaffected). Models:
+  `Organization`, `OrganizationMember`, `OrganizationInvitation`.
+- **Centralised access (security linchpin)** — all domain authorization funnels through:
+  - `Domain::scopeAccessibleBy($user)` (list endpoints) and `User::canAccessDomain($d)` (single) — superadmin→all,
+    personal owner→own, org owner/admin→all org domains, member→only `domain_access`-granted.
+  - `User::canManageDomain($d)` — stricter (owner/admin/superadmin only) for rename/delete/rotate-token in `DomainController`.
+  - `User::effectiveSubscription()` — a member inherits the org **owner's** plan; the `subscribed` middleware uses it
+    so an agency's employees aren't trial-gated.
+  - **Refactor**: ~27 controllers had scattered `where('user_id',$user->id)` / `$domain->user_id !== $user->id`
+    checks — all replaced with the centralised helpers. When adding a domain-scoped endpoint, use
+    `Domain::accessibleBy($user)` / `canAccessDomain` — never re-introduce a raw `user_id` check.
+- **Team API** (`OrganizationController`, auth but NOT behind `subscribed`): `GET /organization` (members, invites,
+  domains, seat/domain limits), `POST /organization` (create), `POST /organization/invitations` (invite by email +
+  role + domain_ids; existing user → added immediately, else pending invite + `invite_url`), `POST
+  /organization/invitations/{token}/accept`, `DELETE /organization/invitations/{id}`, `POST
+  /organization/members/{userId}/domains` (assign), `DELETE /organization/members/{userId}`. Pending invites are
+  **auto-accepted on registration** (RegisterController) when the email matches.
+- **Frontend**: settings `team/` page (create workspace, invite, per-member domain chips, remove, cancel invite),
+  `(auth)/auth/accept-invite` page (logged-in users), sidebar "Team" link (`nav.team`). API: `src/api/organization.ts`.
+- **NOTE / open guardrail**: the Agency plan is **free with no expiry**, so any user can self-create an org and get
+  5 domains + 10 seats (bypassing the 30-day trial). Flip `plans.agency.price_monthly` / gate `POST /organization`
+  behind approval if abuse appears.
+
+## 23. Plan-upgrade support tickets (manual upgrade path, Jun 2026)
+Workaround for payment-gateway issues: users request a plan upgrade → opens a ticket + chat with the
+super-admin; both can attach files; the admin discusses then **applies the plan directly from the ticket**.
+- **Schema** (`..._create_upgrade_tickets_tables`): `upgrade_tickets` (user_id, requested_plan_id, subject,
+  status `open|pending_user|resolved|closed`, last_message_at, resolved_at) + `upgrade_ticket_messages`
+  (sender_user_id, is_admin, is_system, body, attachment_path/name/mime; `attachment_url` appended via Storage).
+  Models `UpgradeTicket`, `UpgradeTicketMessage`. Attachments on the **public** disk under
+  `upgrade-tickets/{id}/` (needs `storage:link`, same as billing receipts).
+- **User API** (`UpgradeTicketController`, auth, **NOT** behind `subscribed` so trial-expired users can ask):
+  `GET/POST /upgrade-tickets`, `GET /upgrade-tickets/{id}`, `POST /upgrade-tickets/{id}/messages` (multipart).
+- **Admin API** (`Admin\AdminUpgradeTicketController`, superadmin): `GET /admin/upgrade-tickets?status=`,
+  `GET .../{id}`, `POST .../{id}/messages` (reply), `POST .../{id}/resolve` (`{plan_id, duration_days?}` →
+  cancels active sub, creates active sub for N days, posts a system message, marks resolved, audit-logged).
+  Reuses the same plan-grant logic as `AdminSubscriptionController::assign`.
+- **Notifications**: `NotificationService::send(..., 'upgrade_ticket', ...)` to superadmins on new request/reply,
+  to the user on admin reply/resolve (best-effort, no email unless the type is in the mail map).
+- **Frontend**: shared `components/upgrade/TicketThread.tsx` (chat bubbles + attachment preview + composer with
+  file picker). User page `settings/upgrade/` (request form: plan + message + attachment; ticket list; chat,
+  8s poll) linked from a banner on `settings/billing/`. Admin page `(admin)/admin/upgrade-tickets/` (list +
+  status filter + chat + **Apply & resolve** panel: plan select + days). API `src/api/upgradeTickets.ts`.
+  Sidebar: settings → `nav.team` already; admin nav gains "Upgrade Requests".
