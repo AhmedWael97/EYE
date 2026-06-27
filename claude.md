@@ -580,3 +580,26 @@ Reduce the signup→first-value drop (users signing up but never adding a domain
   `InitiateCheckout` (billing Paymob + Request-upgrade buttons). Optional Google Ads conversion label via
   `NEXT_PUBLIC_GOOGLE_ADS_SIGNUP_LABEL`. TikTok Pixel + gtag live in `[locale]/layout.tsx` head
   (`NEXT_PUBLIC_TIKTOK_PIXEL_ID` / `NEXT_PUBLIC_GOOGLE_ADS_ID`).
+
+## 25. Mobile conversion & speed (Jun 2026)
+~95% of traffic is mobile (TikTok ads). Production analysis: only ~6.5% of visitors reached `/auth/register`,
+and "excessive scrolling" was flagged on `/en`. Changes (frontend unless noted):
+- **Always-visible mobile navbar CTA** (`components/marketing/Navbar.tsx`) — "Start free" no longer hidden in the hamburger.
+- **Sticky bottom CTA bar** — `components/marketing/MobileCtaBar.tsx` (`md:hidden`, appears after scrolling past the hero),
+  rendered from the landing. Keeps the CTA one tap away regardless of scroll.
+- **Removed fabricated sections** from `(marketing)/page.tsx` — fake company-logos band + fake testimonials
+  (also shortens the mobile page). Honest copy in `messages/{en,ar}.json`: `hero.badge` → "Privacy-first website
+  analytics"; `hero.trustFree` → "30-day free trial" (was "Free forever plan", which contradicted the real trial).
+  Hero `<h1>` now `text-4xl sm:text-6xl` so the CTA sits higher on phones.
+- **Register friction**: `components/ui/input.tsx` inputs are `text-base sm:text-sm` (16px on mobile → no iOS
+  focus-zoom). Register page (`(auth)/auth/register/page.tsx`) **dropped the password-confirmation field**
+  (3 fields), bigger labels/eye-target, `autoComplete="new-password"`. Backend `RegisterRequest` dropped the
+  `confirmed` rule; `api/auth.ts` register type dropped `password_confirmation`.
+- **Mobile performance** (`[locale]/layout.tsx`): self-tracking loader now loads **only eye.js** (no rrweb
+  session-replay on our own marketing site, ~100 KB saved) and **defers to `requestIdleCallback`/load** so it
+  never blocks first paint; `Readex_Pro` trimmed to 4 weights; explicit `export const viewport`.
+
+### Production note (Jun 2026): tracker rate-limit drops campaign data
+`/track` (`/api/collect`) is `throttle:300,1` (per-IP). High-volume TikTok in-app traffic (shared IPs) + error
+spam from broken sessions exceeds it → **429s drop events** (ClickHouse undercounts, can't measure live).
+Consider raising the limit / keying it differently for the ingest endpoint.
