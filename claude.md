@@ -563,3 +563,20 @@ super-admin; both can attach files; the admin discusses then **applies the plan 
   8s poll) linked from a banner on `settings/billing/`. Admin page `(admin)/admin/upgrade-tickets/` (list +
   status filter + chat + **Apply & resolve** panel: plan select + days). API `src/api/upgradeTickets.ts`.
   Sidebar: settings → `nav.team` already; admin nav gains "Upgrade Requests".
+
+## 24. Activation / growth UX (Jun 2026)
+Reduce the signup→first-value drop (users signing up but never adding a domain).
+- **Easier install + verify**: `settings/domains` `InstallGuide` — platform tabs (HTML / WordPress / Shopify /
+  Tag Manager) with tailored instructions, a live **Verify installation** button (`domainsApi.verify` →
+  `GET /domains/{id}/verify`), and an **Email to my developer** `mailto:` with the prefilled snippet.
+- **"One step away" email**: `eye:send-onboarding-reminders` (scheduled **hourly** in `routes/console.php`)
+  emails users 2–72h old with **no domain** and **not** in an org, once each (guarded by
+  `users.onboarding_reminder_sent_at`, migration `..._add_onboarding_reminder_to_users`). Mail::raw, best-effort.
+- **Demo dashboard**: `dashboard/demo/` — fully populated **sample-data** dashboard (KPIs, 14-day chart, top
+  pages, devices, click-heatmap preview, top countries) with "Add my website" CTAs. Deterministic data (no
+  random → no hydration drift). Linked as **"Explore a live demo"** from the no-domain dashboard empty state.
+- **Conversion events** (`lib/track.ts`): `trackSignup()` → TikTok `CompleteRegistration` + Google `sign_up`
+  (fired in register success); `trackViewPlans()` → `ViewContent` (pricing page); `trackInitiateCheckout()` →
+  `InitiateCheckout` (billing Paymob + Request-upgrade buttons). Optional Google Ads conversion label via
+  `NEXT_PUBLIC_GOOGLE_ADS_SIGNUP_LABEL`. TikTok Pixel + gtag live in `[locale]/layout.tsx` head
+  (`NEXT_PUBLIC_TIKTOK_PIXEL_ID` / `NEXT_PUBLIC_GOOGLE_ADS_ID`).
