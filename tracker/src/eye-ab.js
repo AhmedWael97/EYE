@@ -58,9 +58,11 @@
       st.textContent = v.css;
       (d.head || d.documentElement).appendChild(st);
     }
-    if (v.js) {
-      try { (new Function(v.js))(); } catch (e) { /* customer variation code error — never break the page */ }
-    }
+    // NOTE: server-provided JS variations are intentionally NOT executed.
+    // Running remote JS (new Function/eval) makes the tracker look like remote
+    // code execution to malware / "circumventing systems" scanners (Google Ads,
+    // Safe Browsing) — which gets the host site's ads disapproved and can flag
+    // the domain. A/B tests therefore support CSS + split_url (redirect) only.
   }
 
   function expose(expKey, varKey) {
