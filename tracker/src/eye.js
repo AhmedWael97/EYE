@@ -348,16 +348,21 @@
       matchPipelines();
     }, true);
 
-    // Form abandon
-    var focused = {};
+    // Auto form-field analytics → field-by-field drop funnel. No value captured.
+    var forms = {};
     d.addEventListener('focusin', function (ev) {
-      var f = ev.target && ev.target.form;
-      if (f) focused[selectorOf(f)] = 1;
+      var el = ev.target, f = el && el.form; if (!f) return;
+      var fld = (el.name || el.id || el.type || '').slice(0, 60); if (!fld) return;
+      var fs = selectorOf(f), st = forms[fs] || (forms[fs] = { f: {} });
+      if (!st.f[fld]) { st.f[fld] = 1; enqueue('form_field', { form: fs, field: fld }); }
+      st.l = fld;
     }, true);
-    d.addEventListener('submit', function (ev) { delete focused[selectorOf(ev.target)]; }, true);
+    d.addEventListener('submit', function (ev) {
+      var fs = selectorOf(ev.target); if (forms[fs]) forms[fs].s = 1;
+      enqueue('form_submit', { form: fs });
+    }, true);
     w.addEventListener('beforeunload', function () {
-      var keys = Object.keys(focused);
-      for (var i = 0; i < keys.length; i++) enqueue('form_abandon', { form: keys[i] });
+      for (var fs in forms) if (forms[fs].l && !forms[fs].s) enqueue('form_abandon', { form: fs, last_field: forms[fs].l });
     });
 
     // Broken link preflight
