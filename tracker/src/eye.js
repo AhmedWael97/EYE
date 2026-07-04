@@ -352,6 +352,7 @@
     var forms = {};
     d.addEventListener('focusin', function (ev) {
       var el = ev.target, f = el && el.form; if (!f) return;
+      if (/^(submit|button|reset|hidden|image)$/.test(el.type)) return; // skip buttons
       var fld = (el.name || el.id || el.type || '').slice(0, 60); if (!fld) return;
       var fs = selectorOf(f), st = forms[fs] || (forms[fs] = { f: {} });
       if (!st.f[fld]) { st.f[fld] = 1; enqueue('form_field', { form: fs, field: fld }); }
