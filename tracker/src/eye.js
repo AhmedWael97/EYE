@@ -257,12 +257,18 @@
 
     // JS errors
     w.addEventListener('error', function (ev) {
+      // Ignore resource-load failures (img/script/link) — ev.target is the element,
+      // not window. Not JS exceptions; huge noise on ad/webview traffic.
+      if (ev.target && ev.target !== w) return;
+      // Ignore opaque cross-origin "Script error." (no file/line/stack) — third-party
+      // pixels & in-app webview scripts. Unactionable; was ~1.7 errors/pageview noise.
+      if ((ev.message === 'Script error.' || !ev.message) && !ev.filename && !ev.error) return;
       enqueue('js_error', {
         msg: ev.message || '', src: ev.filename || '',
         ln: ev.lineno || 0, col: ev.colno || 0,
         stk: ev.error && ev.error.stack ? ev.error.stack.slice(0, 300) : '',
       });
-    });
+    }, true);
     w.addEventListener('unhandledrejection', function (ev) {
       var msg = ev.reason ? (ev.reason.message || String(ev.reason)) : '';
       enqueue('js_error', { msg: msg, stk: ev.reason && ev.reason.stack ? ev.reason.stack.slice(0, 300) : '' });
