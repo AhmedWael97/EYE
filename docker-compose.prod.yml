@@ -172,7 +172,7 @@ services:
     container_name: eye_horizon
     restart: always
     working_dir: /var/www/backend
-    command: php artisan horizon
+    command: sh -c "for i in 1 2 3 4; do (while true; do php artisan queue:work redis --queue=tracking,ai,notifications,exports,default --sleep=1 --tries=3 --max-time=3600 --memory=256; sleep 1; done) & done; wait"
     volumes:
       - ./backend:/var/www/backend
     environment:
