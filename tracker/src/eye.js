@@ -539,6 +539,13 @@
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
+  // Any EYE.track()/identify()/purchase() call made before this script finished
+  // loading (it's deferred to requestIdleCallback by the page) hits the queue
+  // stub the host page installs — `window.EYE = {q:[], track:fn(){q.push(...)}}`
+  // — instead of throwing. Capture that queue now, before we overwrite
+  // window.EYE with the real implementation, and replay it below.
+  var preQueue = (w.EYE && w.EYE.q) || [];
+
   w.EYE = {
     track: function (name, props) {
       if (typeof name !== 'string' || !name || name.length > 64) return;
@@ -589,6 +596,16 @@
 
   // Backwards compat alias
   w.eye = w.EYE;
+
+  // Replay whatever queued up in the stub while we were still loading.
+  for (var qi = 0; qi < preQueue.length; qi++) {
+    var call = preQueue[qi];
+    var method = call && call[0];
+    var args = (call && call[1]) || [];
+    if (method && typeof w.EYE[method] === 'function') {
+      try { w.EYE[method].apply(w.EYE, args); } catch (_) {}
+    }
+  }
 
   // ── Optional: session replay (rrweb) ───────────────────────────────────────
   // Enabled by adding data-replay="true" to the script tag. The heavier replay
