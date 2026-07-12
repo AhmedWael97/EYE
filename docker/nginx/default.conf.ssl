@@ -67,7 +67,7 @@ server {
 server {
     listen 443 ssl;
     http2 on;
-    server_name DOMAIN www.DOMAIN;
+    server_name DOMAIN;
 
     root /var/www/backend/public;
     index index.php;
@@ -283,6 +283,19 @@ server {
     }
 }
 
+# ─── www → apex redirect (same cert, issued with -d DOMAIN -d www.DOMAIN) ─────
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name www.DOMAIN;
+
+    ssl_certificate     /etc/letsencrypt/live/DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/DOMAIN/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/DOMAIN/chain.pem;
+
+    return 301 https://DOMAIN$request_uri;
+}
+
 # ===== eye-analysis.online (second domain — literal, not templated) =====
 server {
     listen 80;
@@ -302,7 +315,7 @@ server {
 server {
     listen 443 ssl;
     http2 on;
-    server_name eye-analysis.online www.eye-analysis.online;
+    server_name eye-analysis.online;
 
     root /var/www/backend/public;
     index index.php;
@@ -518,3 +531,16 @@ server {
     }
 }
 
+
+# ─── www → apex redirect (same cert, issued with -d eye-analysis.online -d www.eye-analysis.online) ─────
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name www.eye-analysis.online;
+
+    ssl_certificate     /etc/letsencrypt/live/eye-analysis.online/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/eye-analysis.online/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/eye-analysis.online/chain.pem;
+
+    return 301 https://eye-analysis.online$request_uri;
+}
