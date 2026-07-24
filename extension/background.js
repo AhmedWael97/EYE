@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE = "https://eye-analsyis.live/api/v1";
+const DEFAULT_API_BASE = "https://eye-analysis.online/api/v1";
 
 async function getConfig() {
   const { apiBase, token } = await chrome.storage.local.get(["apiBase", "token"]);
@@ -79,7 +79,7 @@ async function checkDuePosts() {
 
     chrome.notifications.create(`eye-post-${post.id}`, {
       type: "basic",
-      iconUrl: "https://eye-analsyis.live/favicon.ico",
+      iconUrl: "https://eye-analysis.online/favicon.ico",
       title: `Scheduled post ready — ${post.platform}`,
       message: post.content.slice(0, 150),
       buttons: [{ title: "Open & fill" }],

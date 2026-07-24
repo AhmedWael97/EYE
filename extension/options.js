@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE = "https://eye-analsyis.live/api/v1";
+const DEFAULT_API_BASE = "https://eye-analysis.online/api/v1";
 const input = document.getElementById("api-base");
 
 chrome.storage.local.get(["apiBase"], ({ apiBase }) => {
