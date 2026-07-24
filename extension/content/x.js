@@ -13,12 +13,25 @@
 const SCRAPE_DEBOUNCE_MS = 1500;
 let scrapeTimer = null;
 
+// True once the extension is reloaded/updated while this tab is still open —
+// chrome.runtime dies but this content script (and its MutationObserver) keeps
+// running until the tab is refreshed. Without this check it throws "Extension
+// context invalidated" on every DOM mutation, forever.
+function isExtensionContextValid() {
+  return typeof chrome !== "undefined" && !!chrome.runtime && !!chrome.runtime.id;
+}
+
 function scheduleScrape() {
+  if (!isExtensionContextValid()) {
+    observer.disconnect();
+    return;
+  }
   clearTimeout(scrapeTimer);
   scrapeTimer = setTimeout(scrapeVisibleTweets, SCRAPE_DEBOUNCE_MS);
 }
 
 function scrapeVisibleTweets() {
+  if (!isExtensionContextValid()) return;
   const items = [];
   const tweetNodes = document.querySelectorAll('article[data-testid="tweet"]');
 
@@ -46,8 +59,12 @@ function scrapeVisibleTweets() {
     });
   });
 
-  if (items.length) {
-    chrome.runtime.sendMessage({ type: "EYE_SYNC_ITEMS", items });
+  if (items.length && isExtensionContextValid()) {
+    try {
+      chrome.runtime.sendMessage({ type: "EYE_SYNC_ITEMS", items });
+    } catch (err) {
+      observer.disconnect();
+    }
   }
 }
 
