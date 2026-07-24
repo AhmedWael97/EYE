@@ -1,0 +1,27 @@
+# Standalone compose file for the GPU render box — this does NOT run on the
+# main app server. Deploy this directly on the GPU droplet.
+services:
+  comfyui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eye_comfyui
+    restart: unless-stopped
+    ports:
+      - "8188:8188"
+    volumes:
+      - models:/app/ComfyUI/models
+      - output:/app/ComfyUI/output
+      - input:/app/ComfyUI/input
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  models:
+  output:
+  input:

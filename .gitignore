@@ -48,3 +48,4 @@ Thumbs.db
 frontend/playwright-report/
 frontend/test-results/
 backend/.phpunit.cache/
+client_secret_*.json

@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>EYE Social Manager</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <span class="logo">EYE</span>
+      <span class="sub">Social Manager</span>
+    </header>
+
+    <section id="login-view" hidden>
+      <p class="hint">Log in with your EYE account.</p>
+      <input id="login-email" type="email" placeholder="Email" />
+      <input id="login-password" type="password" placeholder="Password" />
+      <button id="login-btn">Log in</button>
+      <div id="otp-row" hidden>
+        <input id="login-otp" type="text" placeholder="2FA code" />
+        <button id="otp-btn">Verify</button>
+      </div>
+      <p id="login-error" class="error"></p>
+    </section>
+
+    <section id="inbox-view" hidden>
+      <div class="toolbar">
+        <button id="refresh-btn">Refresh</button>
+        <button id="logout-btn" class="link">Log out</button>
+      </div>
+      <div id="items"></div>
+      <p id="empty-hint" class="hint" hidden>
+        Nothing yet. Open Facebook, X or Instagram (logged in) and browse your comments/DMs —
+        the extension scrapes what's visible and syncs it here.
+      </p>
+    </section>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

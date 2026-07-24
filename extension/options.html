@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>EYE Social Manager — Settings</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 420px; margin: 40px auto; color: #20242b; }
+    label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px; }
+    input { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #dfe2e6; border-radius: 6px; margin-bottom: 12px; }
+    button { background: #4f46e5; color: #fff; border: none; border-radius: 6px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+    p.hint { color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h2>EYE Social Manager — Settings</h2>
+  <label for="api-base">API base URL</label>
+  <input id="api-base" placeholder="https://eye-analsyis.live/api/v1" />
+  <p class="hint">Only change this if you're testing against a local/staging backend.</p>
+  <button id="save-btn">Save</button>
+  <p id="saved" class="hint" style="display:none">Saved.</p>
+  <script src="options.js"></script>
+</body>
+</html>
