@@ -46,6 +46,9 @@ map $http_origin $cors_origin {
     "https://www.eye-analysis.online"  "https://www.eye-analysis.online";
     "http://localhost"      "http://localhost";
     "http://localhost:8000" "http://localhost:8000";
+    # Social-manager Chrome extension — Bearer-token auth (no cookies), so
+    # echoing any chrome-extension:// origin back is safe here.
+    "~^chrome-extension://.+$" $http_origin;
 }
 
 # ─── HTTP → HTTPS redirect ────────────────────────────────────────────────────
