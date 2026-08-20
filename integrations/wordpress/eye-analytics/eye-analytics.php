@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name:       EYE Analytics
- * Plugin URI:        https://eye-analsyis.live
+ * Plugin URI:        https://eye-analysis.online
  * Description:       Privacy-first, cookieless website analytics. Paste your site token once and EYE tracks visitors, heatmaps, and conversions — no code, no cookie banner.
  * Version:           1.0.0
  * Author:            EYE Analytics
- * Author URI:        https://eye-analsyis.live
+ * Author URI:        https://eye-analysis.online
  * License:           GPL-2.0+
  * Text Domain:       eye-analytics
  */
@@ -14,7 +14,14 @@ if (!defined('ABSPATH')) {
     exit; // No direct access.
 }
 
-define('EYE_ANALYTICS_HOST', 'https://eye-analsyis.live');
+// This used to point at eye-analsyis.live (pre-migration domain). That host
+// now 301-redirects to eye-analysis.online, which is harmless for the <script
+// src> GET but silently breaks every tracked event: per the Fetch/XHR spec, a
+// 301/302 response to a non-GET request (the tracker's POST to /api/collect)
+// gets resubmitted as a bodyless GET, dropping the event data with no visible
+// error. Every plugin install was affected until this was pointed directly at
+// the current host.
+define('EYE_ANALYTICS_HOST', 'https://eye-analysis.online');
 define('EYE_ANALYTICS_OPTION', 'eye_analytics_token');
 
 /* ── Settings page (Settings → EYE Analytics) ─────────────────────────────── */
