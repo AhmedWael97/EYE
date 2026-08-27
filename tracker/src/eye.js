@@ -115,6 +115,17 @@
 
   // ── Page timing + UTM ─────────────────────────────────────────────────────
   var pageAt = Date.now();
+
+  // Engaged time, not wall clock. The heartbeat used to report `now - pageAt`,
+  // so a tab left open and returned to hours later reported those hours as
+  // time-on-page: production p90 was 2.2 h, p99 15 h, and the tail pinned the
+  // server's 24 h cap. The clock now stops IDLE_MS after the last interaction.
+  var IDLE_MS = 60000;
+  var lastActivityAt = Date.now();
+  function markActivity() { lastActivityAt = Date.now(); }
+  function engagedSeconds() {
+    return Math.max(0, Math.round((Math.min(Date.now(), lastActivityAt + IDLE_MS) - pageAt) / 1000));
+  }
   var lastUrl = d.location ? d.location.href : '';
   var utm = {};
   var scrollFired = {};
@@ -233,22 +244,30 @@
     fireShortPageScrollDepth();
 
     // Time on page / visibility
+    ['pointerdown', 'keydown', 'scroll'].forEach(function (evt) {
+      d.addEventListener(evt, markActivity, { passive: true, capture: true });
+    });
+
     d.addEventListener('visibilitychange', function () {
       if (d.visibilityState === 'hidden') {
-        enqueue('time_on_page', { d: Math.round((Date.now() - pageAt) / 1000) });
+        enqueue('time_on_page', { d: engagedSeconds() });
         flush();
+      } else {
+        markActivity();
       }
     });
 
-    // Heartbeat — send time_on_page every 30 s while the tab is visible.
-    // Ensures sessions are not reported as 0-duration when the tab is closed
-    // abruptly (e.g. mobile Safari where visibilitychange is unreliable).
+    // Heartbeat — report engaged time every 30 s while the tab is visible and
+    // the visitor is not idle. Ensures sessions are not reported as 0-duration
+    // when the tab is closed abruptly (e.g. mobile Safari where
+    // visibilitychange is unreliable). Idle tabs send nothing: the value would
+    // no longer change, and the server already keeps the MAX reported.
     var heartbeatTimer;
     function startHeartbeat() {
       clearInterval(heartbeatTimer);
       heartbeatTimer = setInterval(function () {
-        if (d.visibilityState !== 'hidden') {
-          enqueue('time_on_page', { d: Math.round((Date.now() - pageAt) / 1000) });
+        if (d.visibilityState !== 'hidden' && Date.now() - lastActivityAt < IDLE_MS) {
+          enqueue('time_on_page', { d: engagedSeconds() });
           flush();
         }
       }, 30000);
@@ -497,14 +516,16 @@
     var onRoute = function (isBack) {
       var cur = d.location ? d.location.href : '';
       if (cur !== lastUrl) {
+        // quick_back keys off wall clock (did they bounce right away?), while
+        // the reported time-on-page is engaged seconds.
         var spent = Math.round((Date.now() - pageAt) / 1000);
-        enqueue('time_on_page', { d: spent });
+        enqueue('time_on_page', { d: engagedSeconds() });
         // Quick back: user navigated back within 5 seconds of arriving
         if (isBack && spent < 5) {
           enqueue('quick_back', { from: lastUrl, ms: spent * 1000 });
           flush();
         }
-        lastUrl = cur; pageAt = Date.now(); utm = {}; scrollFired = {};
+        lastUrl = cur; pageAt = Date.now(); markActivity(); utm = {}; scrollFired = {};
         sid = uuid(); store('_eye_sid', sid); store('_eye_sid_ts', String(Date.now()));
         w._eyeSid = sid;
         parseUtm();
