@@ -1,3 +1,20 @@
+# ============================================================================
+#  SOURCE OF TRUTH for the production nginx config.
+#
+#  scripts/deploy.sh renders this over docker/nginx/default.conf on every
+#  deploy, so any change to routing, CORS or the tracker endpoints belongs
+#  HERE — a fix applied only to default.conf does not survive the next deploy.
+#
+#  Two rules the tracker depends on, both learned the hard way:
+#    * /tracker/, /api/(v1/)?(track|collect) and /api/v1/experiments/active must
+#      NEVER redirect, on the apex or on www. A browser following a 301 on a
+#      POST rewrites it into a GET, /api/collect answers 405, and the event is
+#      gone. A 301 also carries no CORS header.
+#    * /api/v1/experiments/active must send Access-Control-Allow-Origin "*",
+#      not $cors_origin — the callers are customers' own domains, which are
+#      never in the dashboard allowlist.
+# ============================================================================
+
 # ─── Compression (gzip) — big win: HTML/JS/CSS were served uncompressed ──────
 gzip on;
 gzip_vary on;
